@@ -100,12 +100,19 @@ public class Mvrk_Autonomous extends LinearOpMode {
         RED,
         BLUE
     }
+
+    public MvrkHeadingEstimator myHeadingEstimator;
+
     class CurrentPoseEstimator {
         Pose2d update() {return Red_CycleStart.myPose2D;}
-
-
     }
     private CurrentPoseEstimator poseEstimator = new CurrentPoseEstimator();
+
+    Pose2d getHeadingCorrectedPoseEstimate(Pose2d expectedPose)
+    {
+        double yaw = myHeadingEstimator.getYaw();
+        return new Pose2d(expectedPose.getX(), expectedPose.getY(), expectedPose.getHeading() - yaw);
+    }
 
     Mvrk_Robot Mavryk = new Mvrk_Robot();
 
@@ -181,6 +188,7 @@ public class Mvrk_Autonomous extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         Mavryk.init(hardwareMap);
+        myHeadingEstimator = new MvrkHeadingEstimator(hardwareMap);
 
         ElapsedTime trajectoryTimer = new ElapsedTime(MILLISECONDS);
 
@@ -283,6 +291,9 @@ public class Mvrk_Autonomous extends LinearOpMode {
 
         buildParkTrajectory(pos);
 
+        // init IMU heading
+        myHeadingEstimator.resetYaw();
+
         // Drop off preload
         trajectoryTimer.reset();
         Mavryk.MecanumDrive.setPoseEstimate(Red_Start.pose2d());
@@ -300,11 +311,11 @@ public class Mvrk_Autonomous extends LinearOpMode {
                     if (!Mavryk.MecanumDrive.isBusy()) {
                         if(Red_cyclesToRun >= 1){
                             currentAutoState = Mvrk_Robot.AutoState.TOPCONE;
-                            Mavryk.MecanumDrive.setPoseEstimate(poseEstimator.update());
+                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajCycleDropOffTopCone);
                         }else{
                             currentAutoState = Mvrk_Robot.AutoState.PARK;
-                            Mavryk.MecanumDrive.setPoseEstimate(poseEstimator.update());
+                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajParking);
                         }
                     }
@@ -313,11 +324,11 @@ public class Mvrk_Autonomous extends LinearOpMode {
                     if (!Mavryk.MecanumDrive.isBusy()) {
                         if(Red_cyclesToRun >= 2){
                             currentAutoState = Mvrk_Robot.AutoState.TOPMIDCONE;
-                            Mavryk.MecanumDrive.setPoseEstimate(poseEstimator.update());
+                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajCycleDropOffTopMidCone);
                         }else{
                             currentAutoState = Mvrk_Robot.AutoState.PARK;
-                            Mavryk.MecanumDrive.setPoseEstimate(poseEstimator.update());
+                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajParking);
                         }
                     }
@@ -326,11 +337,11 @@ public class Mvrk_Autonomous extends LinearOpMode {
                     if (!Mavryk.MecanumDrive.isBusy()) {
                         if(Red_cyclesToRun >= 3){
                             currentAutoState = Mvrk_Robot.AutoState.MIDCONE;
-                            Mavryk.MecanumDrive.setPoseEstimate(poseEstimator.update());
+                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajCycleDropOffMiddleCone);
                         }else{
                             currentAutoState = Mvrk_Robot.AutoState.PARK;
-                            Mavryk.MecanumDrive.setPoseEstimate(poseEstimator.update());
+                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajParking);
                         }
                     }
@@ -339,11 +350,11 @@ public class Mvrk_Autonomous extends LinearOpMode {
                     if (!Mavryk.MecanumDrive.isBusy()) {
                         if(Red_cyclesToRun >= 4){
                             currentAutoState = Mvrk_Robot.AutoState.BOTTOMMIDCONE;
-                            Mavryk.MecanumDrive.setPoseEstimate(poseEstimator.update());
+                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajCycleDropOffBottomMidCone);
                         }else{
                             currentAutoState = Mvrk_Robot.AutoState.PARK;
-                            Mavryk.MecanumDrive.setPoseEstimate(poseEstimator.update());
+                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajParking);
                         }
                     }
@@ -352,11 +363,11 @@ public class Mvrk_Autonomous extends LinearOpMode {
                     if (!Mavryk.MecanumDrive.isBusy()) {
                         if(Red_cyclesToRun >= 5){
                             currentAutoState = Mvrk_Robot.AutoState.BOTTOMCONE;
-                            Mavryk.MecanumDrive.setPoseEstimate(poseEstimator.update());
+                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajCycleDropOffBottomCone);
                         }else{
                             currentAutoState = Mvrk_Robot.AutoState.PARK;
-                            Mavryk.MecanumDrive.setPoseEstimate(poseEstimator.update());
+                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajParking);
                         }
                     }
@@ -364,7 +375,7 @@ public class Mvrk_Autonomous extends LinearOpMode {
                 case BOTTOMCONE:
                     if (!Mavryk.MecanumDrive.isBusy()) {
                         currentAutoState = Mvrk_Robot.AutoState.PARK;
-                        Mavryk.MecanumDrive.setPoseEstimate(poseEstimator.update());
+                        Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                         Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajParking);
                     }
                     break;

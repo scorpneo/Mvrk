@@ -47,6 +47,7 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.MidJunction;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.MiddleCone;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.SlidePower_Down;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.SlidePower_Up;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.SlidePower_Zero;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.TopCone;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.TopMidCone;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.slideTicks_stepSize;
@@ -765,11 +766,21 @@ public class Mvrk_Slide_Debugger extends LinearOpMode {
         telemetry.update();
 
         if( newPos != currPos && newPos >= LowerLimit && newPos <= HighJunction ) {
-            double command = Mvrk_Robot.manualSlidePID.output(newPos, Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.CAT_MOUSE));
-            if(newPos < currPos)
-                Mvrk_Robot.SlidePower = Math.max(command/HighJunction, SlidePower_Down);
-            else
-                Mvrk_Robot.SlidePower = Math.min(command/HighJunction, SlidePower_Up);
+
+//            if( (newPos < currPos) && (currPos < BottomCone) )
+//            {
+//                Mvrk_Robot.SlidePower = Math.max(command/HighJunction, SlidePower_Zero);
+//            }
+//            else
+
+            double command = 0;
+            if (newPos < currPos) {
+                command = Mvrk_Robot.slideDownPID.output(newPos, Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.CAT_MOUSE));
+                Mvrk_Robot.SlidePower = Math.max(command / HighJunction, SlidePower_Down);
+            } else {
+                command = Mvrk_Robot.manualSlidePID.output(newPos, Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.CAT_MOUSE));
+                Mvrk_Robot.SlidePower = Math.min(command / HighJunction, SlidePower_Up);
+            }
 
             Mavryk.setPower(Mvrk_Robot.MvrkMotors.CAT_MOUSE,Mvrk_Robot.SlidePower);
             currPos = Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.CAT_MOUSE);

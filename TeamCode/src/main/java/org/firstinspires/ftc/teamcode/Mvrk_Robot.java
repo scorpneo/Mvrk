@@ -105,7 +105,6 @@ public class Mvrk_Robot
 
     public WebcamName eyeOfSauron = null;
     OpenCvWebcam Sauron = null;
-    public static BNO055IMU imu = null;
 
     // speeds/times
     public static double UpAdjust = 10;
@@ -115,6 +114,7 @@ public class Mvrk_Robot
 
     public static double SlidePower_Up= 1;
     public static double SlidePower_Down = -0.01;
+    public static double SlidePower_Zero = 0.0;
     public static double SlidePower = 0.5;
     public static int slideTicks_stepSize = 600;
 
@@ -252,7 +252,7 @@ public class Mvrk_Robot
     public static double turretHalfRight = 0.40625;
 
     public static MvrkPIDController manualSlidePID = new MvrkPIDController(11, 0, 0.25, 3600);
-
+    public static MvrkPIDController slideDownPID = new MvrkPIDController(3, 0, 0.25, 3600);
     public static double CycleExtendFlamethrowerOffset = -0.5;
     public static double CycleRetractFlamethrowerOffset = -0.25;
 
@@ -325,7 +325,6 @@ public class Mvrk_Robot
 
         MecanumDrive = new SampleMecanumDrive(hwMap);
         eyeOfSauron = hwMap.get(WebcamName.class, "Sauron");
-        imu = hwMap.get(BNO055IMU.class, "imu");
 
         TomAndJerrySlide = new Mvrk_LiftController(hwMap);
         TeacupTurret = new Mvrk_TurretController(hwMap);

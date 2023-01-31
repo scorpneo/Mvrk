@@ -50,7 +50,6 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.SlidePower_Up;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.bumperSpeedAdjust;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.manualSlidePID;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.dPadSpeedAdjust;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.imu;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.slideHeightMaxExtension;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.slideHeightMinExtension;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.slideHeightSafetyBarrier;
@@ -209,11 +208,6 @@ public class Mvrk_Manual extends LinearOpMode {
         Mavryk.Teacup.setPosition(turretUp);
         telemetry.addData("angle", Mavryk.Teacup.getPosition());
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
-        imu.initialize(parameters);
-
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addLine("Status: Robot is ready to roll!");
         telemetry.update();
@@ -284,13 +278,13 @@ public class Mvrk_Manual extends LinearOpMode {
     public void MvrkManualDrive_FieldCentric()
     {
 
-        Localizer myLocaliizer = Mavryk.MecanumDrive.getLocalizer();
-        myLocaliizer.getPoseVelocity();
-        Vector2d input = new Vector2d( -gamepad1.left_stick_y,
-                -gamepad1.left_stick_x).rotated(-imu.getAngularOrientation().firstAngle);
-
-        Mavryk.MecanumDrive.setWeightedDrivePower(new Pose2d(input.getX(), input.getY(), -gamepad1.right_stick_x));
-        Mavryk.MecanumDrive.update();
+//        Localizer myLocaliizer = Mavryk.MecanumDrive.getLocalizer();
+//        myLocaliizer.getPoseVelocity();
+//        Vector2d input = new Vector2d( -gamepad1.left_stick_y,
+//                -gamepad1.left_stick_x).rotated(-imu.getAngularOrientation().firstAngle);
+//
+//        Mavryk.MecanumDrive.setWeightedDrivePower(new Pose2d(input.getX(), input.getY(), -gamepad1.right_stick_x));
+//        Mavryk.MecanumDrive.update();
 
         return;
     }
