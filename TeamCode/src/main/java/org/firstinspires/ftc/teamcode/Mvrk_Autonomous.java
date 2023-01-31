@@ -102,18 +102,6 @@ public class Mvrk_Autonomous extends LinearOpMode {
     }
 
     public MvrkHeadingEstimator myHeadingEstimator;
-
-    class CurrentPoseEstimator {
-        Pose2d update() {return Red_CycleStart.myPose2D;}
-    }
-    private CurrentPoseEstimator poseEstimator = new CurrentPoseEstimator();
-
-    Pose2d getHeadingCorrectedPoseEstimate(Pose2d expectedPose)
-    {
-        double yaw = myHeadingEstimator.getYaw();
-        return new Pose2d(expectedPose.getX(), expectedPose.getY(), expectedPose.getHeading() - yaw);
-    }
-
     Mvrk_Robot Mavryk = new Mvrk_Robot();
 
     private static FtcDashboard rykRobot;
@@ -122,31 +110,11 @@ public class Mvrk_Autonomous extends LinearOpMode {
 
     private static int iTeleCt = 1;
 
-    // VUFORIA Key
-    public static final String VUFORIA_LICENSE_KEY = "AZRnab7/////AAABmTUhzFGJLEyEnSXEYWthkjhGRzu8klNOmOa9WEHaryl9AZCo2bZwq/rtvx83YRIgV60/Jy/2aivoXaHNzwi7dEMGoaglSVmdmzPF/zOPyiz27dDJgLVvIROD8ww7lYzL8eweJ+5PqLAavvX3wgrahkOxxOCNeKG9Tl0LkbS5R11ATXL7LLWeUv5FP1aDNgMZvb8P/u96OdOvD6D40Nf01Xf+KnkF5EXwNQKk1r7qd/hiv9h80gvBXMFqMkVgUyogwEnlK2BfmeUhGVm/99BiwwW65LpKSaLVPpW/6xqz9SyPgZ/L/vshbWgSkTB/KoERiV8MsW79RPUuQS6NTOLY32I/kukmsis3MFst5LP/d3gx";
-
     // Field Dimensions
 
     // Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
     // We will define some constants and conversions here
     private static final float mmPerInch        = 25.4f;
-    private static final float mmTargetHeight   = 6 * mmPerInch;          // the height of the center of the target image above the floor
-    private static final float halfField        = 72 * mmPerInch;
-    private static final float halfTile         = 12 * mmPerInch;
-    private static final float oneAndHalfTile   = 36 * mmPerInch;
-
-    final float CAMERA_FORWARD_DISPLACEMENT  = 0.0f * mmPerInch;   // eg: Enter the forward distance from the center of the robot to the camera lens
-    final float CAMERA_VERTICAL_DISPLACEMENT = 6.0f * mmPerInch;   // eg: Camera is 6 Inches above ground
-    final float CAMERA_LEFT_DISPLACEMENT     = 0.0f * mmPerInch;   // eg: Enter the left distance from the center of the robot to the camera lens
-
-    // Class Members
-    private OpenGLMatrix lastLocation   = null;
-    private VuforiaLocalizer vuforia    = null;
-    private VuforiaTrackables targets   = null ;
-
-    private boolean targetVisible       = false;
-
-
     static final double FEET_PER_METER = 3.28084;
 
     // Lens intrinsics
@@ -189,7 +157,6 @@ public class Mvrk_Autonomous extends LinearOpMode {
 
         Mavryk.init(hardwareMap);
         myHeadingEstimator = new MvrkHeadingEstimator(hardwareMap);
-
         ElapsedTime trajectoryTimer = new ElapsedTime(MILLISECONDS);
 
         // init Dashboard
@@ -234,42 +201,7 @@ public class Mvrk_Autonomous extends LinearOpMode {
 
         // while waiting for the game to start, search for april tags
         while (!isStarted() && !isStopRequested()) {
-            ArrayList<AprilTagDetection> currentDetections = pipeline.getLatestDetections();
-            if (currentDetections.size() != 0) {
-                boolean tagFound = false;
-
-                for (AprilTagDetection tag : currentDetections) {
-                    if (tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT) {
-                        tagOfInterest = tag;
-                        tagFound = true;
-                        break;
-                    }
-                }
-
-                if (tagFound) {
-                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                    tagToTelemetry(tagOfInterest);
-                } else {
-                    telemetry.addLine("Don't see tag of interest :(");
-                    if (tagOfInterest == null) {
-                        telemetry.addLine("(The tag has never been seen)");
-                    }
-                    else {
-                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                        tagToTelemetry(tagOfInterest);
-                    }
-                }
-            } else {
-                telemetry.addLine("Don't see tag of interest :(");
-
-                if (tagOfInterest == null) {
-                    telemetry.addLine("(The tag has never been seen)");
-                } else {
-                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                    tagToTelemetry(tagOfInterest);
-                }
-            }
-//            telemetry.update();
+            detectAprilTags();
             sleep(20);
         }
 
@@ -309,6 +241,9 @@ public class Mvrk_Autonomous extends LinearOpMode {
             switch (currentAutoState) {
                 case PRELOAD:
                     if (!Mavryk.MecanumDrive.isBusy()) {
+                        telemetry.addData("Preload Trajectory completed in: ", trajectoryTimer.milliseconds());
+                        telemetry.update();
+                        trajectoryTimer.reset();
                         if(Red_cyclesToRun >= 1){
                             currentAutoState = Mvrk_Robot.AutoState.TOPCONE;
                             Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
@@ -322,6 +257,10 @@ public class Mvrk_Autonomous extends LinearOpMode {
                     break;
                 case TOPCONE:
                     if (!Mavryk.MecanumDrive.isBusy()) {
+                        telemetry.addData("TopCone Trajectory completed in: ", trajectoryTimer.milliseconds());
+                        telemetry.update();
+                        trajectoryTimer.reset();
+
                         if(Red_cyclesToRun >= 2){
                             currentAutoState = Mvrk_Robot.AutoState.TOPMIDCONE;
                             Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
@@ -335,6 +274,9 @@ public class Mvrk_Autonomous extends LinearOpMode {
                     break;
                 case TOPMIDCONE:
                     if (!Mavryk.MecanumDrive.isBusy()) {
+                        telemetry.addData("TopMidCone Trajectory completed in: ", trajectoryTimer.milliseconds());
+                        telemetry.update();
+                        trajectoryTimer.reset();
                         if(Red_cyclesToRun >= 3){
                             currentAutoState = Mvrk_Robot.AutoState.MIDCONE;
                             Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
@@ -348,6 +290,8 @@ public class Mvrk_Autonomous extends LinearOpMode {
                     break;
                 case MIDCONE:
                     if (!Mavryk.MecanumDrive.isBusy()) {
+                        telemetry.addData("MidCone Trajectory completed in: ", trajectoryTimer.milliseconds());
+                        telemetry.update();
                         if(Red_cyclesToRun >= 4){
                             currentAutoState = Mvrk_Robot.AutoState.BOTTOMMIDCONE;
                             Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
@@ -361,6 +305,9 @@ public class Mvrk_Autonomous extends LinearOpMode {
                     break;
                 case BOTTOMMIDCONE:
                     if (!Mavryk.MecanumDrive.isBusy()) {
+                        telemetry.addData("BottomMidCone Trajectory completed in: ", trajectoryTimer.milliseconds());
+                        telemetry.update();
+
                         if(Red_cyclesToRun >= 5){
                             currentAutoState = Mvrk_Robot.AutoState.BOTTOMCONE;
                             Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
@@ -374,6 +321,9 @@ public class Mvrk_Autonomous extends LinearOpMode {
                     break;
                 case BOTTOMCONE:
                     if (!Mavryk.MecanumDrive.isBusy()) {
+                        telemetry.addData("BottomCone Trajectory completed in: ", trajectoryTimer.milliseconds());
+                        telemetry.update();
+
                         currentAutoState = Mvrk_Robot.AutoState.PARK;
                         Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                         Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajParking);
@@ -381,6 +331,9 @@ public class Mvrk_Autonomous extends LinearOpMode {
                     break;
                 case PARK:
                     if (!Mavryk.MecanumDrive.isBusy()) {
+                        telemetry.addData("Park Trajectory completed in: ", trajectoryTimer.milliseconds());
+                        telemetry.update();
+
                         currentAutoState = Mvrk_Robot.AutoState.IDLE;
                     }
                     break;
@@ -388,27 +341,30 @@ public class Mvrk_Autonomous extends LinearOpMode {
                     // Do nothing in IDLE
                     // currentAutoState does not change once in IDLE
                     // This concludes the autonomous program
-                    bTrajCompleted = false;
+                    bTrajCompleted = true;
                     break;
             }
 
             Mavryk.MecanumDrive.update();
             Mavryk.TomAndJerrySlide.update();
             Mavryk.TeacupTurret.update();
-
-            // Once we figure out the right steps to drop off the cone & pick up when ready
+            // Once we figure out the sensors to drop off the cone & pick up
             // Mavryk.LooneyClaw.update();
             // Mavryk.FlameThrower.update();
-
-            // Print state to telemetry
-            telemetry.addData("Currently Running", currentAutoState);
-            telemetry.update();
 
         }
         telemetry.addData("Trajectories completed in: %f seconds", trajectoryTimer.seconds() );
         telemetry.addData("Current Slide Pos: %d", slide_currentPos);
         telemetry.update();
 
+    }
+
+    Pose2d getHeadingCorrectedPoseEstimate(Pose2d expectedPose)
+    {
+        double yaw = myHeadingEstimator.getYaw();
+        telemetry.addData("Yaw correction: ", yaw);
+        telemetry.update();
+        return new Pose2d(expectedPose.getX(), expectedPose.getY(), expectedPose.getHeading() - yaw);
     }
 
     void buildPreloadTrajectory() {
@@ -457,56 +413,6 @@ public class Mvrk_Autonomous extends LinearOpMode {
         return;
     }
 
-    void buildParkTrajectory(int iPos)
-    {
-        telemetry.addLine(String.format("%d. buildParkTrajectory", iTeleCt++));
-
-        switch (iPos) {
-            case 1:
-            default:
-                trajParking = Mavryk.MecanumDrive.trajectorySequenceBuilder(Red_CycleStart.pose2d())
-                        .lineToLinearHeading(Red_Park_Pos1.pose2d())
-                            .UNSTABLE_addTemporalMarkerOffset(Cycle_offset2, () -> {
-                                Mavryk.TeacupTurret.setTargetPosition(turretUp);    // STEP 2
-                            })
-                            .UNSTABLE_addTemporalMarkerOffset(Cycle_offset4, () -> {
-                                Mavryk.TomAndJerrySlide.setTargetPosition(FloorPosition);    // STEP 3
-                            })
-                        .build();
-                break;
-            case 2:
-                trajParking = Mavryk.MecanumDrive.trajectorySequenceBuilder(Red_CycleStart.pose2d())
-                         .lineToLinearHeading(Red_Park_Pos2.pose2d())
-                            .UNSTABLE_addTemporalMarkerOffset(Cycle_offset2, () -> {
-                                Mavryk.TeacupTurret.setTargetPosition(turretUp);    // STEP 2
-                            })
-                            .UNSTABLE_addTemporalMarkerOffset(Cycle_offset4, () -> {
-                                Mavryk.TomAndJerrySlide.setTargetPosition(FloorPosition);    // STEP 3
-                            })
-                        .build();
-                break;
-            case 3:
-                trajParking = Mavryk.MecanumDrive.trajectorySequenceBuilder(Red_CycleStart.pose2d())
-                        .lineToLinearHeading(Red_Park_Pos3.pose2d())
-                            .UNSTABLE_addTemporalMarkerOffset(Cycle_offset2, () -> {
-                                Mavryk.TeacupTurret.setTargetPosition(turretUp);    // STEP 2
-                            })
-                            .UNSTABLE_addTemporalMarkerOffset(Cycle_offset4, () -> {
-                                Mavryk.TomAndJerrySlide.setTargetPosition(FloorPosition);    // STEP 3
-                            })
-                        .build();
-                break;
-        }
-
-        int iNumSegments = trajParking.size();
-        telemetry.addLine(String.format("%d. Park Trajectory numTrajectory Segments: %d", iTeleCt++, iNumSegments));
-        for(int iSeg=0; iSeg<iNumSegments; iSeg++ ) {
-            telemetry.addLine(String.format("%d. Park Trajectory Segment %d Duration: %.3f", iTeleCt++, iSeg,trajParking.get(iSeg).getDuration()));
-        }
-        telemetry.addLine(String.format("%d. Park Trajectory calculated Duration: %.3f", iTeleCt++, trajParking.duration()));
-
-        return;
-    }
 
     TrajectorySequence buildCycleTrajectory(int iCycleConePickup)
     {
@@ -571,6 +477,97 @@ public class Mvrk_Autonomous extends LinearOpMode {
         return trajSeq;
     }
 
+    void buildParkTrajectory(int iPos)
+    {
+        telemetry.addLine(String.format("%d. buildParkTrajectory", iTeleCt++));
+
+        switch (iPos) {
+            case 1:
+            default:
+                trajParking = Mavryk.MecanumDrive.trajectorySequenceBuilder(Red_CycleStart.pose2d())
+                        .lineToLinearHeading(Red_Park_Pos1.pose2d())
+                        .UNSTABLE_addTemporalMarkerOffset(Cycle_offset2, () -> {
+                            Mavryk.TeacupTurret.setTargetPosition(turretUp);    // STEP 2
+                        })
+                        .UNSTABLE_addTemporalMarkerOffset(Cycle_offset4, () -> {
+                            Mavryk.TomAndJerrySlide.setTargetPosition(FloorPosition);    // STEP 3
+                        })
+                        .build();
+                break;
+            case 2:
+                trajParking = Mavryk.MecanumDrive.trajectorySequenceBuilder(Red_CycleStart.pose2d())
+                        .lineToLinearHeading(Red_Park_Pos2.pose2d())
+                        .UNSTABLE_addTemporalMarkerOffset(Cycle_offset2, () -> {
+                            Mavryk.TeacupTurret.setTargetPosition(turretUp);    // STEP 2
+                        })
+                        .UNSTABLE_addTemporalMarkerOffset(Cycle_offset4, () -> {
+                            Mavryk.TomAndJerrySlide.setTargetPosition(FloorPosition);    // STEP 3
+                        })
+                        .build();
+                break;
+            case 3:
+                trajParking = Mavryk.MecanumDrive.trajectorySequenceBuilder(Red_CycleStart.pose2d())
+                        .lineToLinearHeading(Red_Park_Pos3.pose2d())
+                        .UNSTABLE_addTemporalMarkerOffset(Cycle_offset2, () -> {
+                            Mavryk.TeacupTurret.setTargetPosition(turretUp);    // STEP 2
+                        })
+                        .UNSTABLE_addTemporalMarkerOffset(Cycle_offset4, () -> {
+                            Mavryk.TomAndJerrySlide.setTargetPosition(FloorPosition);    // STEP 3
+                        })
+                        .build();
+                break;
+        }
+
+        int iNumSegments = trajParking.size();
+        telemetry.addLine(String.format("%d. Park Trajectory numTrajectory Segments: %d", iTeleCt++, iNumSegments));
+        for(int iSeg=0; iSeg<iNumSegments; iSeg++ ) {
+            telemetry.addLine(String.format("%d. Park Trajectory Segment %d Duration: %.3f", iTeleCt++, iSeg,trajParking.get(iSeg).getDuration()));
+        }
+        telemetry.addLine(String.format("%d. Park Trajectory calculated Duration: %.3f", iTeleCt++, trajParking.duration()));
+
+        return;
+    }
+
+    void detectAprilTags()
+    {
+        ArrayList<AprilTagDetection> currentDetections = pipeline.getLatestDetections();
+        if (currentDetections.size() != 0) {
+            boolean tagFound = false;
+
+            for (AprilTagDetection tag : currentDetections) {
+                if (tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT) {
+                    tagOfInterest = tag;
+                    tagFound = true;
+                    break;
+                }
+            }
+
+            if (tagFound) {
+                telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                tagToTelemetry(tagOfInterest);
+            } else {
+                telemetry.addLine("Don't see tag of interest :(");
+                if (tagOfInterest == null) {
+                    telemetry.addLine("(The tag has never been seen)");
+                }
+                else {
+                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                    tagToTelemetry(tagOfInterest);
+                }
+            }
+        } else {
+            telemetry.addLine("Don't see tag of interest :(");
+
+            if (tagOfInterest == null) {
+                telemetry.addLine("(The tag has never been seen)");
+            } else {
+                telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                tagToTelemetry(tagOfInterest);
+            }
+        }
+        return;
+    }
+
     void initMotorsAndServos()
     {
         // Reset Slides - current position becomes 0
@@ -592,64 +589,6 @@ public class Mvrk_Autonomous extends LinearOpMode {
         return result;
     }
 
-    public void getTag(AprilTagDetectionPipeline pipeline)
-    {
-        ArrayList<AprilTagDetection> currentDetections = pipeline.getLatestDetections();
-        if(currentDetections.size() != 0)
-        {
-            boolean tagFound = false;
-
-            for(AprilTagDetection tag : currentDetections)
-            {
-                if(tag.id == LEFT ||  tag.id == MIDDLE || tag.id == RIGHT)
-                {
-                    tagOfInterest = tag;
-                    tagFound = true;
-                    break;
-                }
-            }
-
-            if(tagFound)
-            {
-                telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                tagToTelemetry(tagOfInterest);
-            }
-            else
-            {
-                telemetry.addLine("Don't see tag of interest :(");
-
-                if(tagOfInterest == null)
-                {
-                    telemetry.addLine("(The tag has never been seen)");
-                }
-                else
-                {
-                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                    tagToTelemetry(tagOfInterest);
-                }
-            }
-
-        }
-        else
-        {
-            telemetry.addLine("Don't see tag of interest :(");
-
-            if(tagOfInterest == null)
-            {
-                telemetry.addLine("(The tag has never been seen)");
-            }
-            else
-            {
-                telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                tagToTelemetry(tagOfInterest);
-            }
-
-        }
-
-        telemetry.update();
-        sleep(20);
-    }
-
     void tagToTelemetry(AprilTagDetection detection)
     {
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
@@ -660,106 +599,6 @@ public class Mvrk_Autonomous extends LinearOpMode {
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
-
-    //    private void EstimateCurrentPose() {
-//        // TODO: use vumarks to update current pose
-//
-//
-//        currentPose = Red_Pickup.pose2d();
-//
-////        //get vuforia position
-////        // check all the trackable targets to see which one (if any) is visible.
-////        targetVisible = false;
-////        for (VuforiaTrackable trackable : allTrackables) {
-////            if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-////                telemetry.addData("Visible Target", trackable.getName());
-////                targetVisible = true;
-////
-////                // getUpdatedRobotLocation() will return null if no new information is available since
-////                // the last time that call was made, or if the trackable is not currently visible.
-////                OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
-////                if (robotLocationTransform != null) {
-////                    lastLocation = robotLocationTransform;
-////                }
-////                break;
-////            }
-////        }
-//
-//        // Provide feedback as to where the robot is located (if we know).
-//        if (targetVisible) {
-//            // express position (translation) of robot in inches.
-//            VectorF translation = lastLocation.getTranslation();
-//            telemetry.addData("Pos (inches)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-//                    translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-//
-//            // express the rotation of the robot in degrees.
-//            Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-//            telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
-//        }
-//        else {
-//            telemetry.addData("Visible Target", "none");
-//        }
-//        telemetry.update();
-//        //get separate coordinates
-//        //set currentPose = -|x|, -|y|
-//    }
-
-//    void initVuforia(){
-//        // Connect to the camera we are to use.  This name must match what is set up in Robot Configuration
-////        webcamName = Mavryk.eyeOfSauron;
-//
-//        /*
-//         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-//         * We can pass Vuforia the handle to a camera preview resource (on the RC screen);
-//         * If no camera-preview is desired, use the parameter-less constructor instead (commented out below).
-//         * Note: A preview window is required if you want to view the camera stream on the Driver Station Phone.
-//         */
-//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-//        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-//        // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-//
-//        parameters.vuforiaLicenseKey = VUFORIA_LICENSE_KEY;
-//
-//        // We also indicate which camera we wish to use.
-//        parameters.cameraName = webcamName;
-//
-//        // Turn off Extended tracking.  Set this true if you want Vuforia to track beyond the target.
-//        parameters.useExtendedTracking = false;
-//
-//        //  Instantiate the Vuforia engine
-//        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-//
-//        // Load the data sets for the trackable objects. These particular data
-//        // sets are stored in the 'assets' part of our application.
-//        targets = this.vuforia.loadTrackablesFromAsset("PowerPlay");
-//
-//        // For convenience, gather together all the trackable objects in one easily-iterable collection */
-//        List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
-//        allTrackables.addAll(targets);
-//
-//
-//        // Name and locate each trackable object
-//        identifyTarget(0, "Red Audience Wall",   -halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0,  90);
-//        identifyTarget(1, "Red Rear Wall",        halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0, -90);
-//        identifyTarget(2, "Blue Audience Wall",  -halfField,   oneAndHalfTile, mmTargetHeight, 90, 0,  90);
-//        identifyTarget(3, "Blue Rear Wall",       halfField,   oneAndHalfTile, mmTargetHeight, 90, 0, -90);
-//
-//        OpenGLMatrix cameraLocationOnRobot = OpenGLMatrix
-//                .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
-//                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XZY, DEGREES, 90, 90, 0));
-//
-//        /**  Let all the trackable listeners know where the camera is.  */
-//        for (VuforiaTrackable trackable : allTrackables) {
-//            ((VuforiaTrackableDefaultListener) trackable.getListener()).setCameraLocationOnRobot(parameters.cameraName, cameraLocationOnRobot);
-//        }
-//    }
-//    void    identifyTarget(int targetIndex, String targetName, float dx, float dy, float dz, float rx, float ry, float rz) {
-//        VuforiaTrackable aTarget = targets.get(targetIndex);
-//        aTarget.setName(targetName);
-//        aTarget.setLocation(OpenGLMatrix.translation(dx, dy, dz)
-//                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, rx, ry, rz)));
-//    }
-
 }
 
 
