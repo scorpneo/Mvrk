@@ -144,7 +144,7 @@ public class Mvrk_Robot
     public static MvrkPose2d Red_Start = new MvrkPose2d(35.5, 63.5, -90);
     public static MvrkPose2d Red_Preload_Dropoff = new MvrkPose2d(35.5,0, -90);
     public static MvrkPose2d Red_CycleStart = new MvrkPose2d(34.5,12, -90); //  x = 35.5
-    public static MvrkPose2d Red_CycleEnd  = new MvrkPose2d(53,12,-90); // 52
+    public static MvrkPose2d Red_CycleEnd  = new MvrkPose2d(51.5,12,-90); // 52
     public static MvrkPose2d Red_Park_Pos1 = new MvrkPose2d(57,12, 0); //59
     public static MvrkPose2d Red_Park_Pos2 = new MvrkPose2d(32.5,12, 0);
     public static MvrkPose2d Red_Park_Pos3 = new MvrkPose2d(8.5,12, 0);
@@ -156,13 +156,13 @@ public class Mvrk_Robot
         public static double Preload_offset10 = -0.9;
         public static double Preload_offset11 = -0.2;
 
-        public static double Preload_wait6 = 0.2;
+        public static double Preload_wait6 = 0.1;
         public static double Preload_wait7 = 0.2;
         public static double Preload_wait8 = 0.2;
 
         public static double Cycle_offset2 = -1.2;
         public static double Cycle_offset3 = -0.8;
-        public static double Cycle_offset4 = -0.6;
+        public static double Cycle_offset4 = -0.4;
         public static double Cycle_offset5 = 0;
         public static double Cycle_offset6 = 0;
         public static double Cycle_offset7 = 0;

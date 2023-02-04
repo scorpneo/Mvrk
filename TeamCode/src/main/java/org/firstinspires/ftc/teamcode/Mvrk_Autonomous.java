@@ -22,10 +22,8 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_wait6;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_wait7;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.DropOffPos;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.FloorPosition;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.GroundJunction;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.MiddleCone;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_offset10;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_offset11;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_offset2;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_offset3;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_offset4;
@@ -45,16 +43,12 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_Park_Pos3;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_Start;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.MvrkMotors.CAT_MOUSE;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.MvrkServos.FLAMETHROWER;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.SlidePower_Down;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.SlidePower_Up;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.TopMidCone;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.TopCone;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.HighJunction;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.LowJunction;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.slide_currentPos;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.slide_newPos;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretDropoff;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretHalfRight;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretLeft;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretRight;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretUp;
@@ -64,7 +58,6 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideInterPos;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideOutPos;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideInPos;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlidePickupPos;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideSafetyBarrier;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -75,9 +68,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -97,6 +87,7 @@ import java.util.ArrayList;
 public class Mvrk_Autonomous extends LinearOpMode {
 
     private Pose2d currentPose;
+    public static boolean useVuforia = false;
 
     enum MvrkAllianceField {
         RED,
@@ -104,6 +95,7 @@ public class Mvrk_Autonomous extends LinearOpMode {
     }
 
     public MvrkHeadingEstimator myHeadingEstimator;
+    public MvrkPoseEstimator myPoseEstimator;
     Mvrk_Robot Mavryk = new Mvrk_Robot();
 
     private static FtcDashboard rykRobot;
@@ -159,6 +151,8 @@ public class Mvrk_Autonomous extends LinearOpMode {
 
         Mavryk.init(hardwareMap);
         myHeadingEstimator = new MvrkHeadingEstimator(hardwareMap);
+        myPoseEstimator = new MvrkPoseEstimator(hardwareMap);
+
         ElapsedTime trajectoryTimer = new ElapsedTime(MILLISECONDS);
 
         // init Dashboard
@@ -248,11 +242,11 @@ public class Mvrk_Autonomous extends LinearOpMode {
                         trajectoryTimer.reset();
                         if(Red_cyclesToRun >= 1){
                             currentAutoState = Mvrk_Robot.AutoState.TOPCONE;
-                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
+                            Mavryk.MecanumDrive.setPoseEstimate(getCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajCycleDropOffTopCone);
                         }else{
                             currentAutoState = Mvrk_Robot.AutoState.PARK;
-                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
+                            Mavryk.MecanumDrive.setPoseEstimate(getCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajParking);
                         }
                     }
@@ -265,11 +259,11 @@ public class Mvrk_Autonomous extends LinearOpMode {
 
                         if(Red_cyclesToRun >= 2){
                             currentAutoState = Mvrk_Robot.AutoState.TOPMIDCONE;
-                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
+                            Mavryk.MecanumDrive.setPoseEstimate(getCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajCycleDropOffTopMidCone);
                         }else{
                             currentAutoState = Mvrk_Robot.AutoState.PARK;
-                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
+                            Mavryk.MecanumDrive.setPoseEstimate(getCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajParking);
                         }
                     }
@@ -281,11 +275,11 @@ public class Mvrk_Autonomous extends LinearOpMode {
                         trajectoryTimer.reset();
                         if(Red_cyclesToRun >= 3){
                             currentAutoState = Mvrk_Robot.AutoState.MIDCONE;
-                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
+                            Mavryk.MecanumDrive.setPoseEstimate(getCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajCycleDropOffMiddleCone);
                         }else{
                             currentAutoState = Mvrk_Robot.AutoState.PARK;
-                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
+                            Mavryk.MecanumDrive.setPoseEstimate(getCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajParking);
                         }
                     }
@@ -297,11 +291,11 @@ public class Mvrk_Autonomous extends LinearOpMode {
                         trajectoryTimer.reset();
                         if(Red_cyclesToRun >= 4){
                             currentAutoState = Mvrk_Robot.AutoState.BOTTOMMIDCONE;
-                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
+                            Mavryk.MecanumDrive.setPoseEstimate(getCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajCycleDropOffBottomMidCone);
                         }else{
                             currentAutoState = Mvrk_Robot.AutoState.PARK;
-                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
+                            Mavryk.MecanumDrive.setPoseEstimate(getCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajParking);
                         }
                     }
@@ -314,11 +308,11 @@ public class Mvrk_Autonomous extends LinearOpMode {
 
                         if(Red_cyclesToRun >= 5){
                             currentAutoState = Mvrk_Robot.AutoState.BOTTOMCONE;
-                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
+                            Mavryk.MecanumDrive.setPoseEstimate(getCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajCycleDropOffBottomCone);
                         }else{
                             currentAutoState = Mvrk_Robot.AutoState.PARK;
-                            Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
+                            Mavryk.MecanumDrive.setPoseEstimate(getCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                             Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajParking);
                         }
                     }
@@ -330,7 +324,7 @@ public class Mvrk_Autonomous extends LinearOpMode {
                         trajectoryTimer.reset();
 
                         currentAutoState = Mvrk_Robot.AutoState.PARK;
-                        Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
+                        Mavryk.MecanumDrive.setPoseEstimate(getCorrectedPoseEstimate(Red_CycleStart.pose2d()));
                         Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajParking);
                     }
                     break;
@@ -373,6 +367,25 @@ public class Mvrk_Autonomous extends LinearOpMode {
         telemetry.update();
 
         return new Pose2d(expectedPose.getX(), expectedPose.getY(), expectedPose.getHeading() + yaw);
+    }
+
+    Pose2d getVuforiaCorrectedPoseEstimate(Pose2d expectedPose)
+    {
+        Pose2d currentRobotPose = myPoseEstimator.update(expectedPose);
+        telemetry.addData("current position from camera x: %.3f, y: %.3f, heading: %.3f",
+                String.valueOf(currentRobotPose.getX()),
+                currentRobotPose.getY(),
+                currentRobotPose.getHeading());
+        telemetry.update();
+        return currentRobotPose;
+    }
+
+    Pose2d getCorrectedPoseEstimate(Pose2d expectedPose)
+    {
+        if(useVuforia)
+            return getVuforiaCorrectedPoseEstimate(expectedPose);
+        else
+            return getHeadingCorrectedPoseEstimate(expectedPose);
     }
 
     void buildPreloadTrajectory() {
@@ -458,6 +471,70 @@ public class Mvrk_Autonomous extends LinearOpMode {
                     .UNSTABLE_addTemporalMarkerOffset(Cycle_offset11, () -> {
                         Mavryk.FlameThrower.setPosition(xSlideOutPos);     //STEP11
                     })
+                .addTemporalMarker( () -> {
+                    Mavryk.TomAndJerrySlide.setTargetPosition(DropOffPos);    // STEP 12
+                })
+                .waitSeconds(Cycle_wait12)
+                .addTemporalMarker( () -> {
+                    Mavryk.Looney.setPosition(Claw_Open_Pos); // STEP 13
+                })
+                .waitSeconds(Cycle_wait13)
+                .addTemporalMarker(() -> {
+                    Mavryk.FlameThrower.setPosition(xSlideInterPos); // STEP 14
+                })
+                .waitSeconds(Cycle_wait14)
+                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset15, () -> {
+                    Mavryk.TomAndJerrySlide.setTargetPosition(LowJunction);  //STEP 15                 // STEP 10
+                })
+                .build();
+
+        int iNumSegments = trajSeq.size();
+        telemetry.addLine(String.format("%d. Cycle %d numTrajectory Segments: %d", iTeleCt++, iCycleConePickup, iNumSegments));
+        for(int iSeg=0; iSeg<iNumSegments; iSeg++ ) {
+            telemetry.addLine(String.format("%d. Cycle %d Trajectory Segment %d Duration: %.3f", iTeleCt++, iCycleConePickup, iSeg,trajSeq.get(iSeg).getDuration()));
+        }
+        telemetry.addLine(String.format("%d. Cycle %d Trajectory calculated Duration: %.3f", iTeleCt++, iCycleConePickup, trajSeq.duration()));
+
+        return trajSeq;
+    }
+
+    TrajectorySequence buildCycle4Trajectory(int iCycleConePickup)
+    {
+        telemetry.addLine(String.format("%d. buildCycleTrajectory %d", iTeleCt++, iCycleConePickup));
+        Pose2d CycleEnd = new Pose2d(50, 12, -90);
+        TrajectorySequence trajSeq = Mavryk.MecanumDrive.trajectorySequenceBuilder(Red_CycleStart.pose2d())
+                .lineToLinearHeading(CycleEnd) // STEP 1
+                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset2, () -> {
+                    Mavryk.TeacupTurret.setTargetPosition(turretLeft);    // STEP 2
+                })
+                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset3, () -> {
+                    Mavryk.TomAndJerrySlide.setTargetPosition(iCycleConePickup);    // STEP 3
+                })
+                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset4, () -> {
+                    Mavryk.FlameThrower.setPosition(xSlidePickupPos);    // STEP 4
+                })
+                .addTemporalMarker(()->{
+                    Mavryk.Looney.setPosition(Claw_Close_Pos);
+                })
+                .waitSeconds(Cycle_wait5)   // STEP 5
+                .addTemporalMarker(()->{
+                    Mavryk.TomAndJerrySlide.setTargetPosition(LowJunction);
+                })
+                .waitSeconds(Cycle_wait6)   //STEP 6
+                .addTemporalMarker(()->{
+                    Mavryk.FlameThrower.setPosition(xSlideInPos);
+                })
+                .waitSeconds(Cycle_wait7)   //STEP 7
+                .lineToLinearHeading(Red_CycleStart.pose2d())   //STEP 8
+                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset9, () -> {
+                    Mavryk.TeacupTurret.setTargetPosition(turretDropoff);   //STEP 9
+                })
+                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset10, () -> {
+                    Mavryk.TomAndJerrySlide.setTargetPosition(HighJunction);    //STEP10
+                })
+                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset11, () -> {
+                    Mavryk.FlameThrower.setPosition(xSlideOutPos);     //STEP11
+                })
                 .addTemporalMarker( () -> {
                     Mavryk.TomAndJerrySlide.setTargetPosition(DropOffPos);    // STEP 12
                 })
