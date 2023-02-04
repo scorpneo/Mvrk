@@ -62,13 +62,13 @@ public class MvrkVuforiaPoseEstimator {
         identifyTarget(2, "Blue Audience Wall",  -halfField,   oneAndHalfTile, mmTargetHeight, 90, 0,  90);
         identifyTarget(3, "Blue Rear Wall",       halfField,   oneAndHalfTile, mmTargetHeight, 90, 0, -90);
 
-        final float CAMERA_FORWARD_DISPLACEMENT = 0.0f * mmPerInch;
-        final float CAMERA_VERTICAL_DISPLACEMENT = 6.0f * mmPerInch;
-        final float CAMERA_LEFT_DISPLACEMENT = 0.0f * mmPerInch;
+        final float CAMERA_FORWARD_DISPLACEMENT = -5.5f * mmPerInch;
+        final float CAMERA_VERTICAL_DISPLACEMENT = 4.0f * mmPerInch;
+        final float CAMERA_LEFT_DISPLACEMENT = 4.0f * mmPerInch;
 
         OpenGLMatrix cameraLocationOnRobot = OpenGLMatrix.
                 translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XZY, DEGREES, 0, -90, 0));
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XZY, DEGREES, -90, 0, 0));
 
         for(VuforiaTrackable trackable: allTrackables) {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setCameraLocationOnRobot(parameters.cameraName, cameraLocationOnRobot);
