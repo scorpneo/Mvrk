@@ -95,7 +95,7 @@ public class Mvrk_Autonomous extends LinearOpMode {
     }
 
     public MvrkHeadingEstimator myHeadingEstimator;
-    public MvrkPoseEstimator myPoseEstimator;
+    public MvrkVuforiaPoseEstimator myPoseEstimator;
     Mvrk_Robot Mavryk = new Mvrk_Robot();
 
     private static FtcDashboard rykRobot;
@@ -151,7 +151,7 @@ public class Mvrk_Autonomous extends LinearOpMode {
 
         Mavryk.init(hardwareMap);
         myHeadingEstimator = new MvrkHeadingEstimator(hardwareMap);
-        myPoseEstimator = new MvrkPoseEstimator(hardwareMap);
+        myPoseEstimator = new MvrkVuforiaPoseEstimator(hardwareMap);
 
         ElapsedTime trajectoryTimer = new ElapsedTime(MILLISECONDS);
 
