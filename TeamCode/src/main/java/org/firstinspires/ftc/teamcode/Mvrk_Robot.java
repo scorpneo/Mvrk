@@ -144,10 +144,10 @@ public class Mvrk_Robot
     public static MvrkPose2d Red_Start = new MvrkPose2d(35.5, 63.5, -90);
     public static MvrkPose2d Red_Preload_Dropoff = new MvrkPose2d(35.5,0, -90);
     public static MvrkPose2d Red_CycleStart = new MvrkPose2d(34.5,12, -90); //  x = 35.5
-    public static MvrkPose2d Red_CycleEnd  = new MvrkPose2d(52,12,-90); // 53
+    public static MvrkPose2d Red_CycleEnd  = new MvrkPose2d(53,12,-90); // 52
     public static MvrkPose2d Red_Park_Pos1 = new MvrkPose2d(57,12, 0); //59
-    public static MvrkPose2d Red_Park_Pos2 = new MvrkPose2d(36,12, 0);
-    public static MvrkPose2d Red_Park_Pos3 = new MvrkPose2d(10,12, 0);
+    public static MvrkPose2d Red_Park_Pos2 = new MvrkPose2d(32.5,12, 0);
+    public static MvrkPose2d Red_Park_Pos3 = new MvrkPose2d(8.5,12, 0);
 
         public static double Preload_offset2 = -2.4;
         public static double Preload_offset3 = -2.2;
@@ -208,8 +208,9 @@ public class Mvrk_Robot
     //Flamethrower variables
     public static double xSlideOutPos = 0.12;
     public static double xSlideDropPos = 0.4; //0.5;
-    public static double xSlidePickupPos = 0.12; //todo: eliminate?
+    public static double xSlidePickupPos = 0.17; //todo: eliminate?
     public static double xSlideInPos = 0.58;
+    public static double xSlideInterPos = 0.49;
 
     public static double xSlideMaxExtension = xSlideOutPos;
     public static double xSlideMinExtension = xSlideInPos;
@@ -221,12 +222,12 @@ public class Mvrk_Robot
     //Slide variables
     public static int LowerLimit     = 0;
     public static int FloorPosition  = 600;
-    public static int BottomCone     = 1000; //1240
+    public static int BottomCone     = 1150; //1240
     public static int GroundJunction = 1940;
-    public static int BottomMidCone  = 2260; //2460
-    public static int MiddleCone     = 2630; //2830
-    public static int TopMidCone     = 2930; //3130
-    public static int TopCone        = 3500; // 3730
+    public static int BottomMidCone  = 2410; //2460
+    public static int MiddleCone     = 2780; //2830
+    public static int TopMidCone     = 3080; //3130
+    public static int TopCone        = 3700; // 3730
     public static int LowJunction    = 7900;
     public static int MidJunction    = 12370;
     public static int DropOffPos     = 13860;
@@ -252,7 +253,7 @@ public class Mvrk_Robot
     public static double turretHalfRight = 0.40625;
 
     public static MvrkPIDController manualSlidePID = new MvrkPIDController(11, 0, 0.25, 3600);
-    public static MvrkPIDController slideDownPID = new MvrkPIDController(3, 0, 0.25, 3600);
+    public static MvrkPIDController slideDownPID = new MvrkPIDController(3, 0, 0.25, 1000);
     public static double CycleExtendFlamethrowerOffset = -0.5;
     public static double CycleRetractFlamethrowerOffset = -0.25;
 

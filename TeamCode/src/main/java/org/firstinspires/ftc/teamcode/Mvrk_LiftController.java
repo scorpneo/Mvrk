@@ -39,12 +39,16 @@ public class Mvrk_LiftController {
 
     public void update() {
         if(currPos != tgtPos ) {
-            double command = liftController.output(tgtPos, tom.getCurrentPosition());
-            double slidePower = (tgtPos < currPos) ?
-                    Math.max(command / HighJunction, SlidePower_Down) :
-                    Math.min(command / HighJunction, SlidePower_Up);
-            jerry.setPower(slidePower);
-            tom.setPower(slidePower);
+            double command = 0;
+            if (tgtPos < currPos) {
+                command = Mvrk_Robot.slideDownPID.output(tgtPos, tom.getCurrentPosition());
+                Mvrk_Robot.SlidePower = Math.max(command / HighJunction, SlidePower_Down);
+            } else {
+                command = Mvrk_Robot.manualSlidePID.output(tgtPos, tom.getCurrentPosition());
+                Mvrk_Robot.SlidePower = Math.min(command / HighJunction, SlidePower_Up);
+            }
+            jerry.setPower(Mvrk_Robot.SlidePower);
+            tom.setPower(Mvrk_Robot.SlidePower);
             currPos = tom.getCurrentPosition();
         }
         if(telemetry != null) {
@@ -53,4 +57,3 @@ public class Mvrk_LiftController {
         }
     }
 }
-
