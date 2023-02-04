@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
@@ -18,6 +19,8 @@ import org.firstinspires.ftc.teamcode.util.RegressionUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretUp;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideInPos;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_RPM;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.rpmToVelocity;
@@ -54,6 +57,12 @@ public class AutomaticFeedforwardTuner extends LinearOpMode {
 
         telemetry.addLine("Press play to begin the feedforward tuning routine");
         telemetry.update();
+
+        Servo Teacup = hardwareMap.get(Servo.class, "Teacup");
+        Teacup.setPosition(turretUp);
+
+        Servo FlameThrower = hardwareMap.get(Servo.class, "Flamethrower");
+        FlameThrower.setPosition(xSlideInPos);
 
         waitForStart();
 

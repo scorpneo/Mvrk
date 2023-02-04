@@ -292,6 +292,7 @@ public class Mvrk_Autonomous extends LinearOpMode {
                     if (!Mavryk.MecanumDrive.isBusy()) {
                         telemetry.addData("MidCone Trajectory completed in: ", trajectoryTimer.milliseconds());
                         telemetry.update();
+                        trajectoryTimer.reset();
                         if(Red_cyclesToRun >= 4){
                             currentAutoState = Mvrk_Robot.AutoState.BOTTOMMIDCONE;
                             Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
@@ -307,6 +308,7 @@ public class Mvrk_Autonomous extends LinearOpMode {
                     if (!Mavryk.MecanumDrive.isBusy()) {
                         telemetry.addData("BottomMidCone Trajectory completed in: ", trajectoryTimer.milliseconds());
                         telemetry.update();
+                        trajectoryTimer.reset();
 
                         if(Red_cyclesToRun >= 5){
                             currentAutoState = Mvrk_Robot.AutoState.BOTTOMCONE;
@@ -323,6 +325,7 @@ public class Mvrk_Autonomous extends LinearOpMode {
                     if (!Mavryk.MecanumDrive.isBusy()) {
                         telemetry.addData("BottomCone Trajectory completed in: ", trajectoryTimer.milliseconds());
                         telemetry.update();
+                        trajectoryTimer.reset();
 
                         currentAutoState = Mvrk_Robot.AutoState.PARK;
                         Mavryk.MecanumDrive.setPoseEstimate(getHeadingCorrectedPoseEstimate(Red_CycleStart.pose2d()));
@@ -333,6 +336,7 @@ public class Mvrk_Autonomous extends LinearOpMode {
                     if (!Mavryk.MecanumDrive.isBusy()) {
                         telemetry.addData("Park Trajectory completed in: ", trajectoryTimer.milliseconds());
                         telemetry.update();
+                        trajectoryTimer.reset();
 
                         currentAutoState = Mvrk_Robot.AutoState.IDLE;
                     }
@@ -363,8 +367,10 @@ public class Mvrk_Autonomous extends LinearOpMode {
     {
         double yaw = myHeadingEstimator.getYaw();
         telemetry.addData("Yaw correction: ", yaw);
+        telemetry.addData("Corrected heading:", expectedPose.getHeading() + yaw);
         telemetry.update();
-        return new Pose2d(expectedPose.getX(), expectedPose.getY(), expectedPose.getHeading() - yaw);
+
+        return new Pose2d(expectedPose.getX(), expectedPose.getY(), expectedPose.getHeading() + yaw);
     }
 
     void buildPreloadTrajectory() {

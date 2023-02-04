@@ -12,12 +12,15 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.Objects;
 
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretUp;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideInPos;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_VEL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
@@ -81,6 +84,12 @@ public class ManualFeedforwardTuner extends LinearOpMode {
         telemetry.addLine("Ready!");
         telemetry.update();
         telemetry.clearAll();
+
+        Servo Teacup = hardwareMap.get(Servo.class, "Teacup");
+        Teacup.setPosition(turretUp);
+
+        Servo FlameThrower = hardwareMap.get(Servo.class, "Flamethrower");
+        FlameThrower.setPosition(xSlideInPos);
 
         waitForStart();
 

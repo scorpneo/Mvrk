@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretUp;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideInPos;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -8,6 +11,7 @@ import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.MovingStatistics;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
@@ -42,6 +46,12 @@ public class TrackWidthTuner extends LinearOpMode {
         telemetry.addLine("Press play to begin the track width tuner routine");
         telemetry.addLine("Make sure your robot has enough clearance to turn smoothly");
         telemetry.update();
+
+        Servo Teacup = hardwareMap.get(Servo.class, "Teacup");
+        Teacup.setPosition(turretUp);
+
+        Servo FlameThrower = hardwareMap.get(Servo.class, "Flamethrower");
+        FlameThrower.setPosition(xSlideInPos);
 
         waitForStart();
 

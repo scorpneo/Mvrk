@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretUp;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideInPos;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -8,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -50,6 +54,12 @@ public class MaxVelocityTuner extends LinearOpMode {
         telemetry.addLine("");
         telemetry.addLine("Press start when ready.");
         telemetry.update();
+
+        Servo Teacup = hardwareMap.get(Servo.class, "Teacup");
+        Teacup.setPosition(turretUp);
+
+        Servo FlameThrower = hardwareMap.get(Servo.class, "Flamethrower");
+        FlameThrower.setPosition(xSlideInPos);
 
         waitForStart();
 

@@ -108,9 +108,9 @@ public class Mvrk_Robot
 
     // speeds/times
     public static double UpAdjust = 10;
-    public static double speedAdjust = 5;
+    public static double speedAdjust = 6;
     public static double bumperSpeedAdjust = 8;
-    public static double dPadSpeedAdjust = 5;
+    public static double dPadSpeedAdjust = 6;
 
     public static double SlidePower_Up= 1;
     public static double SlidePower_Down = -0.01;

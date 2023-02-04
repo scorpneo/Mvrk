@@ -295,22 +295,12 @@ public class Mvrk_Manual extends LinearOpMode {
             xSlideMaxExtension = xSlideOutPos;
 
 
-        if (gamepad1.dpad_up) {
-            if (xSlide_Position < xSlideMaxExtension) {
+        if (gamepad1.right_trigger == 1) {
                 xSlide_Position = xSlideMaxExtension;
-            } else {
-                xSlide_Position -= xSlideIncrement;
-            }
+        } else{
+            xSlide_Position = xSlideMinExtension;
         }
 
-        if (gamepad1.dpad_down) {
-            if (xSlide_Position > xSlideMinExtension) {
-                xSlide_Position = xSlideMinExtension;
-            } else {
-                xSlide_Position += xSlideIncrement;
-            }
-
-        }
         Mavryk.setPosition(Mvrk_Robot.MvrkServos.FLAMETHROWER, xSlide_Position);
 
     }
