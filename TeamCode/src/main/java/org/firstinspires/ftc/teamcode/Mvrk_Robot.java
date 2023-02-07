@@ -122,7 +122,7 @@ public class Mvrk_Robot
     public static int BUTTON_TRIGGER_TIMER_MS = 500;
 
     //auto cycles
-    public static int Red_cyclesToRun = 1;
+    public static int Red_cyclesToRun = 5;
     public static int Blue_cyclesToRun = 0;
    
     // Vuforia Class Members

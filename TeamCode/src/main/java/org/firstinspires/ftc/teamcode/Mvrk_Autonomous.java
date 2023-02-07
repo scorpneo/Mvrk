@@ -172,8 +172,8 @@ public class Mvrk_Autonomous extends LinearOpMode {
         trajCycleDropOffTopCone = buildCycleTrajectory(TopCone); // Note: Drop slides to pick up the next cone, in this case Top Mid
         trajCycleDropOffTopMidCone = buildCycleTrajectory(TopMidCone); // Note: Drop slides to pick up the next cone, in this case Middle
         trajCycleDropOffMiddleCone = buildCycleTrajectory(MiddleCone); // Note: Drop slides to pick up the next cone, in this case BottomMid
-        trajCycleDropOffBottomMidCone = buildCycle4Trajectory(BottomMidCone); // Note: Drop slides to pick up the next cone, in this case Bottom
-        trajCycleDropOffBottomCone = buildCycle4Trajectory(BottomCone); // Note: Drop slides to floor to park
+        trajCycleDropOffBottomMidCone = buildCycleTrajectoryDriftAdjusted(BottomMidCone); // Note: Drop slides to pick up the next cone, in this case Bottom
+        trajCycleDropOffBottomCone = buildCycleTrajectoryDriftAdjusted(BottomCone); // Note: Drop slides to floor to park
         telemetry.addData("Status: ", "Building Pre-load and drop off Trajectories completed");
         telemetry.update();
 
@@ -501,7 +501,7 @@ public class Mvrk_Autonomous extends LinearOpMode {
         return trajSeq;
     }
 
-    TrajectorySequence buildCycle4Trajectory(int iCycleConePickup)
+    TrajectorySequence buildCycleTrajectoryDriftAdjusted(int iCycleConePickup)
     {
         telemetry.addLine(String.format("%d. buildCycleTrajectory %d", iTeleCt++, iCycleConePickup));
         TrajectorySequence trajSeq = Mavryk.MecanumDrive.trajectorySequenceBuilder(Red_CycleStart.pose2d())

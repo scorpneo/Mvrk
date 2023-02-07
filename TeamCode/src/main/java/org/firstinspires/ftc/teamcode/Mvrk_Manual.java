@@ -291,8 +291,9 @@ public class Mvrk_Manual extends LinearOpMode {
 
     public void MvrkXSlide() {
 
-            xSlideMinExtension = xSlideInPos;
-            xSlideMaxExtension = xSlideOutPos;
+        xSlideMinExtension = xSlideInPos;
+        xSlideMaxExtension = xSlideOutPos;
+
 
 
         if (gamepad1.right_trigger == 1) {
@@ -300,9 +301,7 @@ public class Mvrk_Manual extends LinearOpMode {
         } else{
             xSlide_Position = xSlideMinExtension;
         }
-
         Mavryk.setPosition(Mvrk_Robot.MvrkServos.FLAMETHROWER, xSlide_Position);
-
     }
 
     public void MvrkClaw() {
