@@ -145,6 +145,7 @@ public class Mvrk_Robot
     public static MvrkPose2d Red_Preload_Dropoff = new MvrkPose2d(35.5,0, -90);
     public static MvrkPose2d Red_CycleStart = new MvrkPose2d(34.5,12, -90); //  x = 35.5
     public static MvrkPose2d Red_CycleEnd  = new MvrkPose2d(51.5,12,-90); // 52
+    public static MvrkPose2d Red_CycleEnd2 = new MvrkPose2d(50, 12, -90);
     public static MvrkPose2d Red_Park_Pos1 = new MvrkPose2d(57,12, 0); //59
     public static MvrkPose2d Red_Park_Pos2 = new MvrkPose2d(32.5,12, 0);
     public static MvrkPose2d Red_Park_Pos3 = new MvrkPose2d(8.5,12, 0);

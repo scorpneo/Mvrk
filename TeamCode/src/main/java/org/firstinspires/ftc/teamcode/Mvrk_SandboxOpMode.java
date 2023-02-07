@@ -33,9 +33,11 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.BUTTON_TRIGGER_TIMER_MS;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.bumperSpeedAdjust;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.dPadSpeedAdjust;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.speedAdjust;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.targets;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -97,11 +99,17 @@ public class Mvrk_SandboxOpMode extends LinearOpMode
         telemetry.addData("Right Tracking wheel: ",Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.LOWER_RIGHT));
         telemetry.addData("Strafe Tracking wheel: ",Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.UPPER_RIGHT));
         // Wait for the game to start (driver presses PLAY)
-        waitForStart();
-        runtime.reset();
 
+//        MvrkVuforiaPoseEstimator poseEstimator = new MvrkVuforiaPoseEstimator(hardwareMap);
+//        // poseEstimator.setTelemetry(telemetry);
+//        Pose2d expectedPose = new Pose2d(0, 0, 0);
+
+        waitForStart();
+
+//        poseEstimator.activateTargets(true);
+        runtime.reset();
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        while (!isStopRequested()) {
 
 //            if(gamepad2.right_trigger !=0 ) {
 //                Mavryk.LooneyClaw.setTargetState(Auto);
@@ -117,6 +125,8 @@ public class Mvrk_SandboxOpMode extends LinearOpMode
 //            }
 //            Mavryk.LooneyClaw.update();
             MvrkManualDrive();
+//            Pose2d currentPose = poseEstimator.update(expectedPose);
+//            telemetry.addLine(String.format("Current Vuforia Pose= (%.3f, %.3f, %.3f)", currentPose.getX(), currentPose.getY(), currentPose.getHeading()));
 
             telemetry.addData("Left Tracking wheel: ",Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.UPPER_LEFT));
             telemetry.addData("Right Tracking wheel: ",Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.LOWER_RIGHT));
@@ -124,6 +134,7 @@ public class Mvrk_SandboxOpMode extends LinearOpMode
 
             telemetry.update();
         }
+//        poseEstimator.activateTargets(false);
     }
 
     public void MvrkManualDrive() {
@@ -199,10 +210,10 @@ public class Mvrk_SandboxOpMode extends LinearOpMode
         } else if (turnDir < -1) {
             turnDir = -1;
         }
-        Mavryk.lower_left.setPower((moveDir /*+ strafeDir - turnDir*/) * (-speedAdjust / 10)); // 1.0
-        Mavryk.lower_right.setPower((moveDir /*- strafeDir + turnDir*/) * (-speedAdjust / 10)); // 1.0
-        Mavryk.upper_left.setPower((moveDir /*- strafeDir - turnDir*/) * (-speedAdjust / 10)); // 0
-        Mavryk.upper_right.setPower((moveDir /*+ strafeDir + turnDir*/) * (-speedAdjust / 10)); // 0
+        Mavryk.lower_left.setPower((moveDir + strafeDir - turnDir) * (-speedAdjust / 10)); // 1.0
+        Mavryk.lower_right.setPower((moveDir - strafeDir + turnDir) * (-speedAdjust / 10)); // 1.0
+        Mavryk.upper_left.setPower((moveDir - strafeDir - turnDir) * (-speedAdjust / 10)); // 0
+        Mavryk.upper_right.setPower((moveDir + strafeDir + turnDir) * (-speedAdjust / 10)); // 0
 
         return;
     }

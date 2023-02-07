@@ -40,17 +40,21 @@ public class MvrkVuforiaPoseEstimator {
     private boolean targetVisible       = false;
 
     Telemetry telemetry;
-    public void setTelemetry(Telemetry telemetry) {
-        this.telemetry = telemetry;
+    public void setTelemetry(Telemetry tele) {
+        if( tele !=null ) this.telemetry = tele;
     }
 
     public MvrkVuforiaPoseEstimator(HardwareMap hwMap) {
         webcamName = hwMap.get(WebcamName.class, "Saruman");
-        int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "Id", hwMap.appContext.getPackageName());
+        int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
+        telemetry.addData("CameraMonitorViewId =", cameraMonitorViewId);
+        telemetry.update();
+
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
         parameters.cameraName = webcamName;
         parameters.useExtendedTracking = false;
+
 
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
         targets = this.vuforia.loadTrackablesFromAsset("PowerPlay");
@@ -71,8 +75,10 @@ public class MvrkVuforiaPoseEstimator {
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XZY, DEGREES, -90, 0, 0));
 
         for(VuforiaTrackable trackable: allTrackables) {
+
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setCameraLocationOnRobot(parameters.cameraName, cameraLocationOnRobot);
         }
+
     }
 
     void identifyTarget(int targetIndex, String targetName, float dx, float dy, float dz, float rx, float ry, float rz)
@@ -83,26 +89,38 @@ public class MvrkVuforiaPoseEstimator {
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, rx, ry, rz)));
     }
 
+    public void activateTargets(boolean bActivate)
+    {
+        if(bActivate)
+            targets.activate();
+        else
+            targets.deactivate();
+        return;
+    }
+
     public Pose2d update(Pose2d expectedPose)
     {
         VectorF translation;
         Orientation rotation;
 
-        targets.activate();
         targetVisible = false;
+        int i=0;
         for(VuforiaTrackable trackable: allTrackables) {
             if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
-                telemetry.addData("Visible Target", trackable.getName());
+                if(telemetry != null)
+                    telemetry.addData("Visible Target", trackable.getName());
                 targetVisible = true;
+                OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener) trackable.getListener()).getUpdatedRobotLocation();
+                if (robotLocationTransform != null) {
+                    lastLocation = robotLocationTransform;
+                }
+                break;
             }
-
-            OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener) trackable.getListener()).getUpdatedRobotLocation();
-            if (robotLocationTransform != null) {
-                lastLocation = robotLocationTransform;
+            else
+            {
+                telemetry.addData("Target not visible", i++);
             }
-            break;
         }
-        targets.deactivate();
 
         if(targetVisible) {
             translation = lastLocation.getTranslation();
@@ -112,8 +130,9 @@ public class MvrkVuforiaPoseEstimator {
                 telemetry.addData("Pos (inches)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
                 telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
-
+                telemetry.update();
             }
+
             return new Pose2d(translation.get(0)/mmPerInch, translation.get(1)/mmPerInch, Math.toRadians(rotation.thirdAngle));
         }
         else {

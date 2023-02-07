@@ -32,6 +32,7 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_wait6;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_wait7;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_wait8;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_CycleEnd;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_CycleEnd2;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_CycleStart;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_Preload_Dropoff;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_cyclesToRun;
@@ -87,7 +88,7 @@ import java.util.ArrayList;
 public class Mvrk_Autonomous extends LinearOpMode {
 
     private Pose2d currentPose;
-    public static boolean useVuforia = false;
+    public static boolean USE_VUFORIA_POSE_ESTIMATOR = false;
 
     enum MvrkAllianceField {
         RED,
@@ -95,7 +96,7 @@ public class Mvrk_Autonomous extends LinearOpMode {
     }
 
     public MvrkHeadingEstimator myHeadingEstimator;
-    public MvrkVuforiaPoseEstimator myPoseEstimator;
+    public MvrkVuforiaPoseEstimator myVuforiaPoseEstimator;
     Mvrk_Robot Mavryk = new Mvrk_Robot();
 
     private static FtcDashboard rykRobot;
@@ -151,7 +152,9 @@ public class Mvrk_Autonomous extends LinearOpMode {
 
         Mavryk.init(hardwareMap);
         myHeadingEstimator = new MvrkHeadingEstimator(hardwareMap);
-        myPoseEstimator = new MvrkVuforiaPoseEstimator(hardwareMap);
+        if(USE_VUFORIA_POSE_ESTIMATOR) {
+            myVuforiaPoseEstimator = new MvrkVuforiaPoseEstimator(hardwareMap);
+        }
 
         ElapsedTime trajectoryTimer = new ElapsedTime(MILLISECONDS);
 
@@ -169,8 +172,8 @@ public class Mvrk_Autonomous extends LinearOpMode {
         trajCycleDropOffTopCone = buildCycleTrajectory(TopCone); // Note: Drop slides to pick up the next cone, in this case Top Mid
         trajCycleDropOffTopMidCone = buildCycleTrajectory(TopMidCone); // Note: Drop slides to pick up the next cone, in this case Middle
         trajCycleDropOffMiddleCone = buildCycleTrajectory(MiddleCone); // Note: Drop slides to pick up the next cone, in this case BottomMid
-        trajCycleDropOffBottomMidCone = buildCycleTrajectory(BottomMidCone); // Note: Drop slides to pick up the next cone, in this case Bottom
-        trajCycleDropOffBottomCone = buildCycleTrajectory(BottomCone); // Note: Drop slides to floor to park
+        trajCycleDropOffBottomMidCone = buildCycle4Trajectory(BottomMidCone); // Note: Drop slides to pick up the next cone, in this case Bottom
+        trajCycleDropOffBottomCone = buildCycle4Trajectory(BottomCone); // Note: Drop slides to floor to park
         telemetry.addData("Status: ", "Building Pre-load and drop off Trajectories completed");
         telemetry.update();
 
@@ -371,18 +374,18 @@ public class Mvrk_Autonomous extends LinearOpMode {
 
     Pose2d getVuforiaCorrectedPoseEstimate(Pose2d expectedPose)
     {
-        Pose2d currentRobotPose = myPoseEstimator.update(expectedPose);
-        telemetry.addData("current position from camera x: %.3f, y: %.3f, heading: %.3f",
-                String.valueOf(currentRobotPose.getX()),
-                currentRobotPose.getY(),
-                currentRobotPose.getHeading());
-        telemetry.update();
+        Pose2d currentRobotPose = expectedPose;
+        if(myVuforiaPoseEstimator != null) {
+            currentRobotPose = myVuforiaPoseEstimator.update(expectedPose);
+            telemetry.addLine(String.format("Current Vuforia Pose= (%.3f, %.3f, %.3f)", currentPose.getX(), currentPose.getY(), currentPose.getHeading()));
+            telemetry.update();
+        }
         return currentRobotPose;
     }
 
     Pose2d getCorrectedPoseEstimate(Pose2d expectedPose)
     {
-        if(useVuforia)
+        if(USE_VUFORIA_POSE_ESTIMATOR)
             return getVuforiaCorrectedPoseEstimate(expectedPose);
         else
             return getHeadingCorrectedPoseEstimate(expectedPose);
@@ -501,9 +504,8 @@ public class Mvrk_Autonomous extends LinearOpMode {
     TrajectorySequence buildCycle4Trajectory(int iCycleConePickup)
     {
         telemetry.addLine(String.format("%d. buildCycleTrajectory %d", iTeleCt++, iCycleConePickup));
-        Pose2d CycleEnd = new Pose2d(50, 12, -90);
         TrajectorySequence trajSeq = Mavryk.MecanumDrive.trajectorySequenceBuilder(Red_CycleStart.pose2d())
-                .lineToLinearHeading(CycleEnd) // STEP 1
+                .lineToLinearHeading(Red_CycleEnd2.pose2d()) // STEP 1
                 .UNSTABLE_addTemporalMarkerOffset(Cycle_offset2, () -> {
                     Mavryk.TeacupTurret.setTargetPosition(turretLeft);    // STEP 2
                 })
