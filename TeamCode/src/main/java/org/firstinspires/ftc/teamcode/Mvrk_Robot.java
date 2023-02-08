@@ -208,7 +208,7 @@ public class Mvrk_Robot
 
     //Flamethrower variables
     public static double xSlideOutPos = 0.12;
-    public static double xSlideDropPos = 0.4; //0.5;
+    public static double xSlideDropPos = 0.45; //0.5;
     public static double xSlidePickupPos = 0.17; //todo: eliminate?
     public static double xSlideInPos = 0.58;
     public static double xSlideInterPos = 0.49;
