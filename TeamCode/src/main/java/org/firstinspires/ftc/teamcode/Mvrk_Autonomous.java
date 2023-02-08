@@ -171,7 +171,7 @@ public class Mvrk_Autonomous extends LinearOpMode {
         buildPreloadTrajectory();
         trajCycleDropOffTopCone = buildCycleTrajectory(TopCone); // Note: Drop slides to pick up the next cone, in this case Top Mid
         trajCycleDropOffTopMidCone = buildCycleTrajectory(TopMidCone); // Note: Drop slides to pick up the next cone, in this case Middle
-        trajCycleDropOffMiddleCone = buildCycleTrajectory(MiddleCone); // Note: Drop slides to pick up the next cone, in this case BottomMid
+        trajCycleDropOffMiddleCone = buildCycleTrajectoryDriftAdjusted(MiddleCone); // Note: Drop slides to pick up the next cone, in this case BottomMid
         trajCycleDropOffBottomMidCone = buildCycleTrajectoryDriftAdjusted(BottomMidCone); // Note: Drop slides to pick up the next cone, in this case Bottom
         trajCycleDropOffBottomCone = buildCycleTrajectoryDriftAdjusted(BottomCone); // Note: Drop slides to floor to park
         telemetry.addData("Status: ", "Building Pre-load and drop off Trajectories completed");
