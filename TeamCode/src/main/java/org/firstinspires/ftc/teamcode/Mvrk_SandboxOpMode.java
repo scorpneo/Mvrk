@@ -29,11 +29,19 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.Mvrk_FlameController.flameState.AutoExtend;
+import static org.firstinspires.ftc.teamcode.Mvrk_FlameController.flameState.Retract;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.BUTTON_TRIGGER_TIMER_MS;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.bumperSpeedAdjust;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.dPadSpeedAdjust;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.speedAdjust;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.targets;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideDropPos;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideInPos;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideOutPos;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlidePickupPos;
+
+import static java.lang.Math.max;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -192,6 +200,7 @@ public class Mvrk_SandboxOpMode extends LinearOpMode
                 changingWheelSpeed = false;
             }
         }
+
 
         //bumper speed boost mode
         if (gamepad1.right_bumper) {

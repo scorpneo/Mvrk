@@ -223,12 +223,12 @@ public class Mvrk_Robot
     //Slide variables
     public static int LowerLimit     = 0;
     public static int FloorPosition  = 600;
-    public static int BottomCone     = 1150; //1240
+    public static int BottomCone     = 740; //before 600 before 1240
     public static int GroundJunction = 1940;
-    public static int BottomMidCone  = 2410; //2460
-    public static int MiddleCone     = 2780; //2830
+    public static int BottomMidCone  = 1280; //2460
+    public static int MiddleCone     = 2180; //2830
     public static int TopMidCone     = 3080; //3130
-    public static int TopCone        = 3700; // 3730
+    public static int TopCone        = 3730; // 3730
     public static int LowJunction    = 7900;
     public static int MidJunction    = 12370;
     public static int DropOffPos     = 13860;

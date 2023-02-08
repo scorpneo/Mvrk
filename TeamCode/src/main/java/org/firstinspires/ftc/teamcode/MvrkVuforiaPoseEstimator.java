@@ -45,7 +45,7 @@ public class MvrkVuforiaPoseEstimator {
     }
 
     public MvrkVuforiaPoseEstimator(HardwareMap hwMap) {
-        webcamName = hwMap.get(WebcamName.class, "Saruman");
+//        webcamName = hwMap.get(WebcamName.class, "Saruman");
         int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
         telemetry.addData("CameraMonitorViewId =", cameraMonitorViewId);
         telemetry.update();
