@@ -29,7 +29,12 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.Mvrk_ClawController.clawState.Auto;
+import static org.firstinspires.ftc.teamcode.Mvrk_ClawController.clawState.Close;
+import static org.firstinspires.ftc.teamcode.Mvrk_ClawController.clawState.Open;
 import static org.firstinspires.ftc.teamcode.Mvrk_FlameController.flameState.AutoExtend;
+import static org.firstinspires.ftc.teamcode.Mvrk_FlameController.flameState.DistanceTriggered;
+import static org.firstinspires.ftc.teamcode.Mvrk_FlameController.flameState.Extend;
 import static org.firstinspires.ftc.teamcode.Mvrk_FlameController.flameState.Retract;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.BUTTON_TRIGGER_TIMER_MS;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.bumperSpeedAdjust;
@@ -87,7 +92,6 @@ public class Mvrk_SandboxOpMode extends LinearOpMode
         Mavryk.init(hardwareMap);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        Mavryk.LooneyClaw.setTelemetry(telemetry);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -112,6 +116,9 @@ public class Mvrk_SandboxOpMode extends LinearOpMode
 //        // poseEstimator.setTelemetry(telemetry);
 //        Pose2d expectedPose = new Pose2d(0, 0, 0);
 
+        Mavryk.FlameThrowerSlide.setTelemetry(telemetry);
+        Mavryk.LooneyClaw.setTelemetry(telemetry);
+
         waitForStart();
 
 //        poseEstimator.activateTargets(true);
@@ -119,19 +126,32 @@ public class Mvrk_SandboxOpMode extends LinearOpMode
         // run until the end of the match (driver presses STOP)
         while (!isStopRequested()) {
 
-//            if(gamepad2.right_trigger !=0 ) {
-//                Mavryk.LooneyClaw.setTargetState(Auto);
-//                telemetry.addLine("Right Trigger active, Claw in Auto");
-//            }
-//            else if(gamepad2.left_trigger != 0) {
-//                Mavryk.LooneyClaw.setTargetState(Close);
-//                telemetry.addLine("Left Trigger active, Claw Closed");
-//            }
-//            else {
-//                Mavryk.LooneyClaw.setTargetState(Open);
-//                telemetry.addLine("No Trigger active, Claw Opened");
-//            }
-//            Mavryk.LooneyClaw.update();
+            if(gamepad2.right_trigger !=0 ) {
+                Mavryk.FlameThrowerSlide.setTargetState(AutoExtend);
+                telemetry.addLine("Right Trigger active, FlameThrower in Auto");
+                Mavryk.LooneyClaw.setTargetState(Auto);
+                telemetry.addLine("Right Trigger active, Claw in Auto");
+            }
+            else if(gamepad2.left_trigger != 0) {
+                Mavryk.LooneyClaw.setTargetState(Close);
+                telemetry.addLine("Left Trigger active, Claw Closed");
+            }
+            else if(gamepad2.left_bumper){
+                Mavryk.FlameThrowerSlide.setTargetState(Retract);
+                telemetry.addLine("Left Bumper active, Flame Retracted");
+            }
+            else if(gamepad2.right_bumper){
+                Mavryk.FlameThrowerSlide.setTargetState(Extend);
+                telemetry.addLine("Left Bumper active, Flame Retracted");
+            }
+            else {
+                Mavryk.LooneyClaw.setTargetState(Open);
+                Mavryk.FlameThrowerSlide.setTargetState(Retract);
+                telemetry.addLine("No Trigger active, Flame Opened");
+            }
+
+            Mavryk.LooneyClaw.update();
+            Mavryk.FlameThrowerSlide.update();
             MvrkManualDrive();
 //            Pose2d currentPose = poseEstimator.update(expectedPose);
 //            telemetry.addLine(String.format("Current Vuforia Pose= (%.3f, %.3f, %.3f)", currentPose.getX(), currentPose.getY(), currentPose.getHeading()));

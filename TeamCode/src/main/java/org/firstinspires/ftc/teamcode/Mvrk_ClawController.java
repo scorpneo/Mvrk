@@ -49,7 +49,7 @@ public class Mvrk_ClawController {
     public Mvrk_ClawController(HardwareMap hardwareMap) {
         claw = hardwareMap.get(Servo.class, "Looney_Toons");
 //        color = hardwareMap.get(NormalizedColorSensor.class, "Retina");
-//        distance = hardwareMap.get(DistanceSensor.class, "Aura");
+        distance = hardwareMap.get(DistanceSensor.class, "Aura");
         currState = clawState.Open;
     }
 

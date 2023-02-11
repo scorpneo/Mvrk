@@ -80,7 +80,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
-import com.outoftheboxrobotics.photoncore.PhotonCore;
+//import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -156,7 +156,7 @@ public class Mvrk_Manual extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        PhotonCore.enable();
+        //PhotonCore.enable();
         // Initialize the drive system vriables
         Mavryk.init(hardwareMap);
 

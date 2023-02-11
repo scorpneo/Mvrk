@@ -102,6 +102,7 @@ public class Mvrk_Robot
     public Mvrk_LiftController TomAndJerrySlide;
     public Mvrk_TurretController TeacupTurret;
     public Mvrk_ClawController LooneyClaw;
+    public Mvrk_FlameController FlameThrowerSlide;
 
     public WebcamName eyeOfSauron = null;
     OpenCvWebcam Sauron = null;
@@ -122,9 +123,9 @@ public class Mvrk_Robot
     public static int BUTTON_TRIGGER_TIMER_MS = 500;
 
     //auto cycles
-    public static int Red_cyclesToRun = 5;
-    public static int Blue_cyclesToRun = 0;
-   
+    public static int Red_cyclesToRun = 4;
+    public static int Blue_cyclesToRun = 4;
+
     // Vuforia Class Members
     public static OpenGLMatrix lastLocation   = null;
     public static VuforiaLocalizer vuforia    = null;
@@ -143,22 +144,34 @@ public class Mvrk_Robot
     
     public static MvrkPose2d Red_Start = new MvrkPose2d(35.5, 63.5, -90);
     public static MvrkPose2d Red_Preload_Dropoff = new MvrkPose2d(35.5,0, -90);
-    public static MvrkPose2d Red_CycleStart = new MvrkPose2d(34.5,12, -90); //  x = 35.5
+    public static MvrkPose2d Red_CycleStart = new MvrkPose2d(33.75,12, -90); //  x = 35.5
     public static MvrkPose2d Red_CycleEnd  = new MvrkPose2d(51.5,12,-90); // 52
     public static MvrkPose2d Red_CycleEnd2 = new MvrkPose2d(50, 12, -90);
     public static MvrkPose2d Red_Park_Pos1 = new MvrkPose2d(57,12, 0); //59
-    public static MvrkPose2d Red_Park_Pos2 = new MvrkPose2d(32.5,12, 0);
-    public static MvrkPose2d Red_Park_Pos3 = new MvrkPose2d(8.5,12, 0);
+    public static MvrkPose2d Red_Park_Pos2 = new MvrkPose2d(30.5,12, 0);
+    public static MvrkPose2d Red_Park_Pos3 = new MvrkPose2d(6.5,12, 0);
+
+    public static MvrkPose2d Blue_Start = new MvrkPose2d(-35.5, 63.5, -90);
+    public static MvrkPose2d Blue_Preload_Dropoff = new MvrkPose2d(-35.5,0, -90);
+    public static MvrkPose2d Blue_CycleStart = new MvrkPose2d(-33.75,12.5, -90); //  x = 35.5
+    public static MvrkPose2d Blue_CycleEnd  = new MvrkPose2d(-52,12,-90); // 52
+    public static MvrkPose2d Blue_CycleEnd2 = new MvrkPose2d(-50, 12, -90);
+    public static MvrkPose2d Blue_Park_Pos1 = new MvrkPose2d(-7,12, 180); //59
+    public static MvrkPose2d Blue_Park_Pos2 = new MvrkPose2d(-32.5,12, 180);
+    public static MvrkPose2d Blue_Park_Pos3 = new MvrkPose2d(-57,12, 180);
 
         public static double Preload_offset2 = -2.4;
         public static double Preload_offset3 = -2.2;
         public static double Preload_offset4 = -1.0;
         public static double Preload_offset5 = -0.4;
+    public static double Preload_offset7 = -0.2;
+    public static double Preload_offset8 = -0.2;
         public static double Preload_offset10 = -0.9;
         public static double Preload_offset11 = -0.2;
 
-        public static double Preload_wait6 = 0.1;
-        public static double Preload_wait7 = 0.2;
+        public static double Preload_wait1 = 0.4;
+        public static double Preload_wait6 = 0.2;
+        public static double Preload_wait7 = 0.0;
         public static double Preload_wait8 = 0.2;
 
         public static double Cycle_offset2 = -1.2;
@@ -170,22 +183,22 @@ public class Mvrk_Robot
         public static double Cycle_offset8 = 0;
         public static double Cycle_offset9 = -1.2;
         public static double Cycle_offset10 = -1;
-        public static double Cycle_offset11 = -0.6;
+        public static double Cycle_offset11 = -0.4;
         public static double Cycle_offset12 = 0;
-        public static double Cycle_offset13 = 0;
-        public static double Cycle_offset14 = 0;
+        public static double Cycle_offset13 = -0.2;
+        public static double Cycle_offset14 = -0.2;
         public static double Cycle_offset15 = -0.2;
         public static double Cycle_offset16 = 0;
         public static double Cycle_offset17 = 0;
 
         public static double Cycle_wait2 = 0;
-        public static double Cycle_wait1 = 0;
+        public static double Cycle_wait1 = 0.4;
         public static double Cycle_wait3 = 0;
         public static double Cycle_wait4 = 0;
         public static double Cycle_wait5 = 0.2;
         public static double Cycle_wait6 = 0.2;
         public static double Cycle_wait7 = 0.2;
-        public static double Cycle_wait8 = 0;
+        public static double Cycle_wait8 = 0.4;
         public static double Cycle_wait9 = 0;
         public static double Cycle_wait10 = 0;
         public static double Cycle_wait11 = 0;
@@ -225,10 +238,10 @@ public class Mvrk_Robot
     public static int FloorPosition  = 600;
     public static int BottomCone     = 740; //before 600 before 1240
     public static int GroundJunction = 1940;
-    public static int BottomMidCone  = 1280; //2460
-    public static int MiddleCone     = 2180; //2830
-    public static int TopMidCone     = 3080; //3130
-    public static int TopCone        = 3730; // 3730
+    public static int BottomMidCone  = 1400; //1280; //2460
+    public static int MiddleCone     = 2530; //2830
+    public static int TopMidCone     = 3180; //3130
+    public static int TopCone        = 3830; // 3730
     public static int LowJunction    = 7900;
     public static int MidJunction    = 12370;
     public static int DropOffPos     = 13860;
@@ -246,9 +259,10 @@ public class Mvrk_Robot
     public static double[] turret_restrictedRange = {0.5, 0.59};
     public static double turretUp = 0.56;
     public static double turretDown = 0;
-    public static double turretLeft = 0.8275;
+    public static double turretLeft = 0.83;
     public static double turretRight = 0.2675;
-    public static double turretDropoff = 0.4138;
+    public static double turretRedDropoff = 0.4138;
+    public static double turretBlueDropoff = 0.6962;
 
     public static double turretIncrement = 0.005;
     public static double turretHalfRight = 0.40625;
@@ -331,7 +345,7 @@ public class Mvrk_Robot
         TomAndJerrySlide = new Mvrk_LiftController(hwMap);
         TeacupTurret = new Mvrk_TurretController(hwMap);
         LooneyClaw = new Mvrk_ClawController(hwMap);
-
+        FlameThrowerSlide = new Mvrk_FlameController(hwMap);
     }
     String formatAngle( AngleUnit angleUnit, double angle) {
         return formatDegrees(angleUnit.DEGREES.fromUnit(angleUnit, angle));
