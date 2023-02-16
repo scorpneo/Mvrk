@@ -35,6 +35,9 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODE
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
+import static org.firstinspires.ftc.teamcode.Mvrk_ClawController.clawState.Auto;
+import static org.firstinspires.ftc.teamcode.Mvrk_ClawController.clawState.Close;
+import static org.firstinspires.ftc.teamcode.Mvrk_ClawController.clawState.Open;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.BUTTON_TRIGGER_TIMER_MS;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Claw_Close_Pos;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Claw_Open_Pos;
@@ -47,6 +50,7 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.MidJunction;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.SlidePower;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.SlidePower_Down;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.SlidePower_Up;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Tilted_Towers_Straight_Pos;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.bumperSpeedAdjust;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.manualSlidePID;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.dPadSpeedAdjust;
@@ -58,12 +62,12 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.slideTicks_stepSize;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretDown;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretIncrement;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretLeft;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretRedDropoff;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretRight;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretSpeed;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretUp;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turret_Move;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turret_Range;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turret_currentPos;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turret_newPos;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turret_restrictedRange;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideInPos;
@@ -73,6 +77,8 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideMinExtension;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideOutPos;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideSafetyBarrier;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlide_Position;
+import static org.firstinspires.ftc.teamcode.Mvrk_TiltedTowers.TiltState.Straight;
+import static org.firstinspires.ftc.teamcode.Mvrk_TiltedTowers.TiltState.Tilted;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -169,6 +175,7 @@ public class Mvrk_Manual extends LinearOpMode {
             MvrkXSlide();
             MvrkUpSlide_Pid();
             MrvkTurret();
+            MvrkTilted_Claw();
 
             if(gamepad1.left_bumper) {
                 if (!changing_drive_mode) {
@@ -199,14 +206,13 @@ public class Mvrk_Manual extends LinearOpMode {
         Mavryk.setRunMode(Mvrk_Robot.MvrkMotors.CAT_MOUSE, STOP_AND_RESET_ENCODER);
         Mavryk.setRunMode(Mvrk_Robot.MvrkMotors.CAT_MOUSE, RUN_WITHOUT_ENCODER);
 
-        Claw_Position = Claw_Close_Pos;
-        Mavryk.Looney.setPosition(Claw_Position);
+        Mavryk.Tilted_Towers.setPosition(Tilted_Towers_Straight_Pos);
 
-        xSlide_Position = xSlideInPos;
-        Mavryk.FlameThrower.setPosition(xSlide_Position);
+        Mavryk.Looney.setPosition(Claw_Close_Pos);
 
-        Mavryk.Teacup.setPosition(turretUp);
-        telemetry.addData("angle", Mavryk.Teacup.getPosition());
+        Mavryk.FlameThrower.setPosition(xSlideInPos);
+
+        Mavryk.Teacup.setPosition(turretUp);   //STEP 9
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addLine("Status: Robot is ready to roll!");
@@ -294,28 +300,41 @@ public class Mvrk_Manual extends LinearOpMode {
         xSlideMinExtension = xSlideInPos;
         xSlideMaxExtension = xSlideOutPos;
 
-
-
         if (gamepad1.right_trigger == 1) {
-                xSlide_Position = xSlideMaxExtension;
+            Mavryk.FlameThrowerSlide.setTargetState(Mvrk_FlameController.flameState.Extend);
         } else{
-            xSlide_Position = xSlideMinExtension;
+            Mavryk.FlameThrowerSlide.setTargetState(Mvrk_FlameController.flameState.Retract);
         }
-        Mavryk.setPosition(Mvrk_Robot.MvrkServos.FLAMETHROWER, xSlide_Position);
+        Mavryk.FlameThrowerSlide.update();
     }
 
     public void MvrkClaw() {
         ServoTurn = gamepad2.right_trigger == 1f;
 
-
-        if (ServoTurn) {
-            Claw_Position = Claw_Open_Pos;
+        if (gamepad2.left_trigger != 0){
+            Mavryk.LooneyClaw.setTargetState(Auto);
+            telemetry.addLine("Claw in Auto grab");
         } else {
-            Claw_Position = Claw_Close_Pos;
+            if (ServoTurn) {
+                Mavryk.LooneyClaw.setTargetState(Open);
+            } else {
+                Mavryk.LooneyClaw.setTargetState(Close);
+            }
+            telemetry.addLine(" Claw in Manual");
         }
+        telemetry.update();
+        Mavryk.LooneyClaw.update();
+    }
 
-        Mavryk.setPosition(Mvrk_Robot.MvrkServos.CARTOON, Claw_Position);
-
+    public void MvrkTilted_Claw() { Mavryk.LooneyClaw.update();
+        if (Mavryk.TomAndJerrySlide.currPos >= LowJunction){
+            Mavryk.TiltTowers.setTargetState(Mvrk_TiltedTowers.TiltState.Tilted);
+            telemetry.addLine("Tilted Claw: Tilted");
+        } else {
+            Mavryk.TiltTowers.setTargetState(Mvrk_TiltedTowers.TiltState.Straight);
+            telemetry.addLine("Tilted Claw: Straight");
+        }
+        telemetry.update();
     }
 
     public void MvrkUpSlide_Pid() {
@@ -415,30 +434,24 @@ public class Mvrk_Manual extends LinearOpMode {
         telemetry.addData("newPos", slide_newPos);
         telemetry.update();
 
-        //actually using the pid to move the slides
-        if( slide_newPos != slide_currentPos && slide_newPos >= slideHeightMinExtension && slide_newPos <= slideHeightMaxExtension ) {
-            double command = manualSlidePID.output(slide_newPos, Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.CAT_MOUSE));
-            if(slide_newPos < slide_currentPos)
-                SlidePower = Math.max(command/HighJunction, SlidePower_Down);
-            else
-                SlidePower = Math.min(command/HighJunction, SlidePower_Up);
 
-            Mavryk.setPower(Mvrk_Robot.MvrkMotors.CAT_MOUSE, SlidePower);
-            slide_currentPos = Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.CAT_MOUSE);
-        }
+        //actually using the pid to move the slides
+        Mavryk.TomAndJerrySlide.setTargetPosition(slide_newPos);
+        Mavryk.TomAndJerrySlide.update();
+        slide_currentPos = Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.CAT_MOUSE);
 
         telemetry.addData("rykUpSlide_pid: Current Slide Position: ", Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.CAT_MOUSE));
         telemetry.update();
     }
 
     public void MrvkTurret() {
-        if (Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.CAT_MOUSE) > slideHeightSafetyBarrier || Mavryk.FlameThrower.getPosition() <= xSlideSafetyBarrier){
+        if (Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.CAT_MOUSE) > slideHeightSafetyBarrier || Mavryk.FlameThrowerSlide.currPos <= xSlideSafetyBarrier){
             turret_Range[0] = turretRight;
             turret_Range[1] = turretLeft;
             telemetry.addData("Turret", "Full range is ready to go!");
         }
         else{
-            if (Claw_Position == Claw_Open_Pos){
+            if (Mavryk.LooneyClaw.currState == Open){
                 turret_Range[0] = turret_restrictedRange[0];
                 turret_Range[1] = turret_restrictedRange[1];
             }else{
@@ -491,12 +504,10 @@ public class Mvrk_Manual extends LinearOpMode {
         }
 
         //actually setting the position
-        if( turret_newPos != turret_currentPos  && turret_newPos >= turret_Range[0] && turret_newPos <= turret_Range[1] ) {
-            turret_Move = (turret_newPos - turret_currentPos) * turretSpeed;
-            Mavryk.Teacup.setPosition(turret_currentPos + turret_Move);
-            telemetry.addData("", turret_currentPos + turret_Move);
-            telemetry.update();
-            turret_currentPos = Mavryk.Teacup.getPosition();
+        if( turret_newPos != Mavryk.TeacupTurret.currPos  && turret_newPos >= turret_Range[0] && turret_newPos <= turret_Range[1] ) {
+            turret_Move = (turret_newPos - Mavryk.TeacupTurret.currPos) * turretSpeed;
+            Mavryk.TeacupTurret.setTargetPosition(Mavryk.TeacupTurret.currPos + turret_Move);
+            Mavryk.TeacupTurret.update();
         }
     }
 }

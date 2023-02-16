@@ -71,7 +71,8 @@ public class Mvrk_Robot
     {
         FLAMETHROWER,
         CARTOON,
-        TEACUP
+        TEACUP,
+        TILT
     }
 
     enum AutoState
@@ -98,11 +99,13 @@ public class Mvrk_Robot
     public Servo FlameThrower = null;
     public Servo Looney = null;
     public Servo Teacup = null;
+    public Servo Tilted_Towers = null;
 
     public Mvrk_LiftController TomAndJerrySlide;
     public Mvrk_TurretController TeacupTurret;
     public Mvrk_ClawController LooneyClaw;
     public Mvrk_FlameController FlameThrowerSlide;
+    public Mvrk_TiltedTowers TiltTowers;
 
     public WebcamName eyeOfSauron = null;
     OpenCvWebcam Sauron = null;
@@ -219,6 +222,10 @@ public class Mvrk_Robot
     public static double Claw_Open_Pos = 0.56;
     public static double Claw_Close_Pos = 0.75;
 
+    //Tilt Positions
+    public static double Tilted_Towers_Tilted_Pos = 0.0; //  Needs to change
+    public static double Tilted_Towers_Straight_Pos = 0.1; // needs to change
+
     //Flamethrower variables
     public static double xSlideOutPos = 0.12;
     public static double xSlideDropPos = 0.45; //0.5;
@@ -282,7 +289,6 @@ public class Mvrk_Robot
     public static double slide_newPos = FloorPosition;
     public static double slide_currentPos = 0;
 
-    public static double turret_currentPos = turretUp;
     public static double turret_newPos = turretUp;
     public static double turret_Move;
 
@@ -316,6 +322,8 @@ public class Mvrk_Robot
         FlameThrower = hwMap.get(Servo.class, "Flamethrower");
         Looney = hwMap.get(Servo.class, "Looney_Toons");
         Teacup = hwMap.get(Servo.class, "Teacup");
+        Tilted_Towers = hwMap.get(Servo.class, "Tilt");
+
 
         // Set all motors to zero power
         upper_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -338,6 +346,10 @@ public class Mvrk_Robot
 
         Looney.setDirection(Servo.Direction.FORWARD);
         Teacup.setDirection(Servo.Direction.FORWARD);
+        FlameThrower.setDirection(Servo.Direction.FORWARD);
+        Tilted_Towers.setDirection(Servo.Direction.FORWARD);
+
+
 
         MecanumDrive = new SampleMecanumDrive(hwMap);
         eyeOfSauron = hwMap.get(WebcamName.class, "Sauron");
@@ -473,6 +485,9 @@ public class Mvrk_Robot
                 break;
             case TEACUP:
                 Teacup.setPosition(iPos);
+                break;
+            case TILT:
+                Tilted_Towers.setPosition(iPos);
                 break;
             default :
                 break;

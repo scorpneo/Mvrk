@@ -92,7 +92,7 @@ public class Mvrk_ClawController {
                 // Close the claw
                 if (updateDistance()) {
 
-                    if(telemetry != null) {
+                    if (telemetry != null) {
                         telemetry.addLine("Distance triggered");
                         telemetry.update();
                     }
@@ -103,8 +103,8 @@ public class Mvrk_ClawController {
 //                            telemetry.update();
 //                        }
                     claw.setPosition(Claw_Close_Pos);
-                }else {
-                    if(telemetry != null) {
+                } else {
+                    if (telemetry != null) {
                         telemetry.addLine("Nothing detected");
                         telemetry.update();
                     }
