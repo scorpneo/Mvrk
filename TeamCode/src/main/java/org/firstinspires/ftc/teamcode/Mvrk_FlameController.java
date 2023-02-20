@@ -134,7 +134,7 @@ public class Mvrk_FlameController {
                     flame.setPosition(currPos);
                 }
                 break;
-            case DistanceTriggered :
+            case DistanceTriggered:
                 flame.setPosition(currPos);
                 currState = flameState.DistanceTriggered;
                 break;

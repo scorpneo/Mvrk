@@ -773,19 +773,21 @@ public class Mvrk_Slide_Debugger extends LinearOpMode {
 //            }
 //            else
 
-            double command = 0;
-            if (newPos < currPos) {
-                command = Mvrk_Robot.slideDownPID.output(newPos, Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.CAT_MOUSE));
-                Mvrk_Robot.SlidePower = Math.max(command / HighJunction, SlidePower_Down);
-            } else {
-                command = Mvrk_Robot.manualSlidePID.output(newPos, Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.CAT_MOUSE));
-                Mvrk_Robot.SlidePower = Math.min(command / HighJunction, SlidePower_Up);
-            }
+//            double command = 0;
+//            if (newPos < currPos) {
+//                command = Mvrk_Robot.slideDownPID.output(newPos, Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.CAT_MOUSE));
+//                Mvrk_Robot.SlidePower = Math.max(command / HighJunction, SlidePower_Down);
+//            } else {
+//                command = Mvrk_Robot.manualSlidePID.output(newPos, Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.CAT_MOUSE));
+//                Mvrk_Robot.SlidePower = Math.min(command / HighJunction, SlidePower_Up);
+//            }
 
-            Mavryk.setPower(Mvrk_Robot.MvrkMotors.CAT_MOUSE,Mvrk_Robot.SlidePower);
+            Mavryk.TomAndJerrySlide.setTargetPosition(newPos);
+            Mavryk.TomAndJerrySlide.update();
             currPos = Mavryk.getCurrentPosition(Mvrk_Robot.MvrkMotors.CAT_MOUSE);
+
             telemetry.addData("currPos updated to: ", currPos);
-            telemetry.addData("command power:", Mvrk_Robot.SlidePower);
+            telemetry.addData("command power:", Mavryk.Tom.getPower());
             telemetry.update();
         }
 

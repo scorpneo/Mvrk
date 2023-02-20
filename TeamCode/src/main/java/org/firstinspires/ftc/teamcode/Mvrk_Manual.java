@@ -51,6 +51,7 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.SlidePower;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.SlidePower_Down;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.SlidePower_Up;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Tilted_Towers_Straight_Pos;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.TopCone;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.bumperSpeedAdjust;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.manualSlidePID;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.dPadSpeedAdjust;
@@ -77,8 +78,8 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideMinExtension;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideOutPos;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideSafetyBarrier;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlide_Position;
-import static org.firstinspires.ftc.teamcode.Mvrk_TiltedTowers.TiltState.Straight;
-import static org.firstinspires.ftc.teamcode.Mvrk_TiltedTowers.TiltState.Tilted;
+//import static org.firstinspires.ftc.teamcode.Mvrk_TiltedTowers.TiltState.Straight;
+//import static org.firstinspires.ftc.teamcode.Mvrk_TiltedTowers.TiltState.Tilted;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -212,7 +213,7 @@ public class Mvrk_Manual extends LinearOpMode {
 
         Mavryk.FlameThrower.setPosition(xSlideInPos);
 
-        Mavryk.Teacup.setPosition(turretUp);   //STEP 9
+        Mavryk.Teacup.setPosition(turretUp);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addLine("Status: Robot is ready to roll!");
@@ -326,15 +327,18 @@ public class Mvrk_Manual extends LinearOpMode {
         Mavryk.LooneyClaw.update();
     }
 
-    public void MvrkTilted_Claw() { Mavryk.LooneyClaw.update();
-        if (Mavryk.TomAndJerrySlide.currPos >= LowJunction){
-            Mavryk.TiltTowers.setTargetState(Mvrk_TiltedTowers.TiltState.Tilted);
-            telemetry.addLine("Tilted Claw: Tilted");
-        } else {
+    public void MvrkTilted_Claw() {
+
+        if (Mavryk.TomAndJerrySlide.currPos <= TopCone || gamepad2.right_trigger == 1f || gamepad2.left_bumper){
             Mavryk.TiltTowers.setTargetState(Mvrk_TiltedTowers.TiltState.Straight);
             telemetry.addLine("Tilted Claw: Straight");
+        } else {
+            Mavryk.TiltTowers.setTargetState(Mvrk_TiltedTowers.TiltState.Tilted);
+            telemetry.addLine("Tilted Claw: Tilted");
         }
         telemetry.update();
+        Mavryk.TiltTowers.update();
+
     }
 
     public void MvrkUpSlide_Pid() {
@@ -504,7 +508,7 @@ public class Mvrk_Manual extends LinearOpMode {
         }
 
         //actually setting the position
-        if( turret_newPos != Mavryk.TeacupTurret.currPos  && turret_newPos >= turret_Range[0] && turret_newPos <= turret_Range[1] ) {
+        if(turret_newPos != Mavryk.TeacupTurret.currPos  && turret_newPos >= turret_Range[0] && turret_newPos <= turret_Range[1] ) {
             turret_Move = (turret_newPos - Mavryk.TeacupTurret.currPos) * turretSpeed;
             Mavryk.TeacupTurret.setTargetPosition(Mavryk.TeacupTurret.currPos + turret_Move);
             Mavryk.TeacupTurret.update();

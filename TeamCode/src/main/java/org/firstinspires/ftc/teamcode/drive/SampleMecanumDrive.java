@@ -34,6 +34,8 @@ import org.firstinspires.ftc.teamcode.util.AxisDirection;
 import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,6 +51,8 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksTo
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+
+import android.os.Environment;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
@@ -76,6 +80,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
+    boolean bEnableLogging = false;
+    public static String smdLogString;
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
@@ -161,6 +167,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
     }
 
+    public void enableLogging(boolean bLogEnabled)
+    {
+        if(bLogEnabled)
+            smdLogString = new String("Begin SMD Log: \n");
+        bEnableLogging = bLogEnabled;
+        return;
+    }
+
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
         return new TrajectoryBuilder(startPose, reversed, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
     }
@@ -218,7 +232,15 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void update() {
         updatePoseEstimate();
-        DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
+        Pose2d poseEstimate = getPoseEstimate();
+        Pose2d poseVelocity = getPoseVelocity();
+        DriveSignal signal = trajectorySequenceRunner.update(poseEstimate, poseVelocity);
+        if(bEnableLogging)
+        {
+            smdLogString += String.format("Pose Estimate: {0.3f, 0.3f, 0.3f}, Pose Velocity: {0.3f, 0.3f, 0.3f}  ",
+                                           poseEstimate.getX(), poseEstimate.getY(), poseEstimate.getHeading(),
+                                            poseVelocity.getX(),poseVelocity.getY(), poseVelocity.getHeading());
+        }
         if (signal != null) setDriveSignal(signal);
     }
 
@@ -299,6 +321,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         lower_left.setPower(v1);
         lower_right.setPower(v2);
         upper_right.setPower(v3);
+        if(bEnableLogging)
+        {
+            smdLogString += String.format("Motor Powers: {UL, LL, LR, UR} = {%.3f, %.3f, %.3f, %.3f}\n", v, v1, v2, v3);
+        }
     }
 
     @Override
@@ -321,5 +347,12 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
+    }
+
+    public String getSMDLogString()
+    {
+        if(bEnableLogging && smdLogString != null)
+            return smdLogString;
+        return "";
     }
 }

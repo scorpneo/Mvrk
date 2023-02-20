@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretUp;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -19,7 +21,7 @@ public class Mvrk_TurretController {
     public Mvrk_TurretController(HardwareMap hardwareMap) {
         turret = hardwareMap.get(Servo.class, "Teacup");
         tgtPos = 0;
-        currPos = 0;
+        currPos = turretUp;
     }
 
     public void setTargetPosition(double target) {

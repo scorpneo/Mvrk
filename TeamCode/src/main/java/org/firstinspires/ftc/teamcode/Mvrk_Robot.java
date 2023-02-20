@@ -223,8 +223,8 @@ public class Mvrk_Robot
     public static double Claw_Close_Pos = 0.75;
 
     //Tilt Positions
-    public static double Tilted_Towers_Tilted_Pos = 0.0; //  Needs to change
-    public static double Tilted_Towers_Straight_Pos = 0.1; // needs to change
+    public static double Tilted_Towers_Tilted_Pos = 0.8; //  Needs to change
+    public static double Tilted_Towers_Straight_Pos = 0.41; // needs to change
 
     //Flamethrower variables
     public static double xSlideOutPos = 0.12;
@@ -249,10 +249,10 @@ public class Mvrk_Robot
     public static int MiddleCone     = 2530; //2830
     public static int TopMidCone     = 3180; //3130
     public static int TopCone        = 3830; // 3730
-    public static int LowJunction    = 7900;
-    public static int MidJunction    = 12370;
+    public static int LowJunction    = 5000;
+    public static int MidJunction    = 10250;
     public static int DropOffPos     = 13860;
-    public static int HighJunction   = 17315;
+    public static int HighJunction   = 14960;
     public static int UpperLimit     = 18000;
 
         //minimum height when the turret is past the restricted range, so it doesn't crash into anything
@@ -274,7 +274,7 @@ public class Mvrk_Robot
     public static double turretIncrement = 0.005;
     public static double turretHalfRight = 0.40625;
 
-    public static MvrkPIDController manualSlidePID = new MvrkPIDController(11, 0, 0.25, 3600);
+    public static MvrkPIDController manualSlidePID = new MvrkPIDController(11, 0, 0.32, 5500); // KD Values .25 -> .32 KG Previous Values 3600 -> 5500 2/19/2023
     public static MvrkPIDController slideDownPID = new MvrkPIDController(3, 0, 0.25, 1000);
     public static double CycleExtendFlamethrowerOffset = -0.5;
     public static double CycleRetractFlamethrowerOffset = -0.25;
@@ -358,6 +358,7 @@ public class Mvrk_Robot
         TeacupTurret = new Mvrk_TurretController(hwMap);
         LooneyClaw = new Mvrk_ClawController(hwMap);
         FlameThrowerSlide = new Mvrk_FlameController(hwMap);
+        TiltTowers = new Mvrk_TiltedTowers(hwMap);
     }
     String formatAngle( AngleUnit angleUnit, double angle) {
         return formatDegrees(angleUnit.DEGREES.fromUnit(angleUnit, angle));
