@@ -44,7 +44,7 @@ public class Mvrk_LiftController {
                 command = Mvrk_Robot.slideDownPID.output(tgtPos, tom.getCurrentPosition());
                 Mvrk_Robot.SlidePower = Math.max(command / HighJunction, SlidePower_Down);
             } else {
-                command = Mvrk_Robot.manualSlidePID.output(tgtPos, tom.getCurrentPosition());
+                command = Mvrk_Robot.slideUpPID.output(tgtPos, tom.getCurrentPosition());
                 Mvrk_Robot.SlidePower = Math.min(command / HighJunction, SlidePower_Up);
             }
             jerry.setPower(Mvrk_Robot.SlidePower);

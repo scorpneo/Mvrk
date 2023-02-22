@@ -40,20 +40,14 @@ import static org.firstinspires.ftc.teamcode.Mvrk_ClawController.clawState.Close
 import static org.firstinspires.ftc.teamcode.Mvrk_ClawController.clawState.Open;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.BUTTON_TRIGGER_TIMER_MS;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Claw_Close_Pos;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Claw_Open_Pos;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Claw_Position;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.LowerLimit;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.FloorPosition;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.HighJunction;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.LowJunction;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.MidJunction;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.SlidePower;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.SlidePower_Down;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.SlidePower_Up;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Tilted_Towers_Straight_Pos;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.TopCone;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.bumperSpeedAdjust;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.manualSlidePID;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.dPadSpeedAdjust;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.slideHeightMaxExtension;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.slideHeightMinExtension;
@@ -63,7 +57,6 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.slideTicks_stepSize;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretDown;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretIncrement;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretLeft;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretRedDropoff;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretRight;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretSpeed;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretUp;
@@ -72,29 +65,20 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turret_Range;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turret_newPos;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turret_restrictedRange;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideInPos;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideIncrement;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideMaxExtension;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideMinExtension;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideOutPos;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideSafetyBarrier;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlide_Position;
 //import static org.firstinspires.ftc.teamcode.Mvrk_TiltedTowers.TiltState.Straight;
 //import static org.firstinspires.ftc.teamcode.Mvrk_TiltedTowers.TiltState.Tilted;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.localization.Localizer;
 //import com.outoftheboxrobotics.photoncore.PhotonCore;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.util.AxisDirection;
-import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 
 import java.util.concurrent.TimeUnit;
 
@@ -475,7 +459,7 @@ public class Mvrk_Manual extends LinearOpMode {
         }
 
         //dPad control
-        if (gamepad2.dpad_left) {
+        if (gamepad2.dpad_left || gamepad1.x) {
                 if(turretLeft >= turret_Range[0] && turretLeft <= turret_Range[1]) {
                     turret_newPos = turretLeft;
                     telemetry.addLine("dPad left triggered. Set turret to left");
@@ -483,7 +467,7 @@ public class Mvrk_Manual extends LinearOpMode {
                 }
         }
 
-        if (gamepad2.dpad_right) {
+        if (gamepad2.dpad_right || gamepad1.b) {
             if(turretRight >= turret_Range[0] && turretRight <= turret_Range[1]) {
                 turret_newPos = turretRight;
                 telemetry.addLine("dPad right triggered. Set turret to right");
@@ -491,7 +475,7 @@ public class Mvrk_Manual extends LinearOpMode {
             }
         }
 
-        if (gamepad2.dpad_up) {
+        if (gamepad2.dpad_up || gamepad1.y) {
             if(turretUp >= turret_Range[0] && turretUp <= turret_Range[1]) {
                 turret_newPos = turretUp;
                 telemetry.addLine("dPad up triggered. Set turret to forward");
@@ -499,7 +483,7 @@ public class Mvrk_Manual extends LinearOpMode {
             }
         }
 
-        if (gamepad2.dpad_down) {
+        if (gamepad2.dpad_down ) {
             if(turretDown >= turret_Range[0] && turretDown <= turret_Range[1]) {
                 turret_newPos = turretDown;
                 telemetry.addLine("dPad down triggered. Set turret to down");
