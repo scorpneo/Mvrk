@@ -167,6 +167,7 @@ public class Mvrk_Robot
         public static double Preload_offset3 = -2.2;
         public static double Preload_offset4 = -1.0;
         public static double Preload_offset5 = -0.4;
+        public static double Preload_offset6 = -0.3;
     public static double Preload_offset7 = -0.2;
     public static double Preload_offset8 = -0.2;
         public static double Preload_offset10 = -0.9;
@@ -181,13 +182,13 @@ public class Mvrk_Robot
         public static double Cycle_offset3 = -0.8;
         public static double Cycle_offset4 = -0.4;
         public static double Cycle_offset5 = 0;
-        public static double Cycle_offset6 = 0;
+        public static double Cycle_offset6 = -0.1;
         public static double Cycle_offset7 = 0;
         public static double Cycle_offset8 = 0;
         public static double Cycle_offset9 = -1.2;
         public static double Cycle_offset10 = -1;
         public static double Cycle_offset11 = -0.4;
-        public static double Cycle_offset12 = 0;
+        public static double Cycle_offset12 = -0.3;
         public static double Cycle_offset13 = -0.2;
         public static double Cycle_offset14 = -0.2;
         public static double Cycle_offset15 = -0.2;
