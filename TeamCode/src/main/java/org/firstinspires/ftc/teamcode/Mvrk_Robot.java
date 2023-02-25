@@ -150,21 +150,21 @@ public class Mvrk_Robot
     public static MvrkPose2d Red_CycleStart = new MvrkPose2d(33.75,12, -90); //  x = 35.5
     public static MvrkPose2d Red_CycleEnd  = new MvrkPose2d(51.5,12,-90); // 52
     public static MvrkPose2d Red_CycleEnd2 = new MvrkPose2d(50, 12, -90);
-    public static MvrkPose2d Red_Park_Pos1 = new MvrkPose2d(57,12, 0); //59
-    public static MvrkPose2d Red_Park_Pos2 = new MvrkPose2d(30.5,12, 0);
-    public static MvrkPose2d Red_Park_Pos3 = new MvrkPose2d(6.5,12, 0);
+    public static MvrkPose2d Red_Park_Pos1 = new MvrkPose2d(56,12, -90); //59
+    public static MvrkPose2d Red_Park_Pos2 = new MvrkPose2d(30.5,12, -90);
+    public static MvrkPose2d Red_Park_Pos3 = new MvrkPose2d(6.5,12, -90);
 
     public static MvrkPose2d Blue_Start = new MvrkPose2d(-35.5, 63.5, -90);
     public static MvrkPose2d Blue_Preload_Dropoff = new MvrkPose2d(-35.5,0, -90);
     public static MvrkPose2d Blue_CycleStart = new MvrkPose2d(-33.75,12.5, -90); //  x = 35.5
     public static MvrkPose2d Blue_CycleEnd  = new MvrkPose2d(-52,12,-90); // 52
     public static MvrkPose2d Blue_CycleEnd2 = new MvrkPose2d(-50, 12, -90);
-    public static MvrkPose2d Blue_Park_Pos1 = new MvrkPose2d(-7,12, 180); //59
-    public static MvrkPose2d Blue_Park_Pos2 = new MvrkPose2d(-32.5,12, 180);
-    public static MvrkPose2d Blue_Park_Pos3 = new MvrkPose2d(-57,12, 180);
+    public static MvrkPose2d Blue_Park_Pos1 = new MvrkPose2d(-7,12, -90); //59
+    public static MvrkPose2d Blue_Park_Pos2 = new MvrkPose2d(-32.5,12, -90);
+    public static MvrkPose2d Blue_Park_Pos3 = new MvrkPose2d(-57,12, -90);
 
         public static double Preload_offset2 = -2.4;
-        public static double Preload_offset3 = -2.2;
+        public static double Preload_offset3 = -1.4; //-2.0
         public static double Preload_offset4 = -1.0;
         public static double Preload_offset5 = -0.4;
         public static double Preload_offset6 = -0.3;
@@ -229,7 +229,7 @@ public class Mvrk_Robot
 
     //Flamethrower variables
     public static double xSlideOutPos = 0.12;
-    public static double xSlideDropPos = 0.45; //0.5;
+    public static double xSlideDropPos = 0.40; //0.45; //0.5;
     public static double xSlidePickupPos = 0.17; //todo: eliminate?
     public static double xSlideInPos = 0.58;
     public static double xSlideInterPos = 0.49;
@@ -246,14 +246,15 @@ public class Mvrk_Robot
     public static int FloorPosition  = 600;
     public static int BottomCone     = 740; //before 600 before 1240
     public static int GroundJunction = 1940;
-    public static int BottomMidCone  = 1400; //1280; //2460
-    public static int MiddleCone     = 2530; //2830
-    public static int TopMidCone     = 3180; //3130
-    public static int TopCone        = 3830; // 3730
+    public static int BottomMidCone  = 1600; //1280; //2460
+    public static int MiddleCone     = 2430; //2530; //2830
+    public static int TopMidCone     = 3080; //3180; //3130
+    public static int TopCone        = 3500;//3600; //3830; // 3730
     public static int LowJunction    = 5800; //5000;
     public static int MidJunction    = 10250;
     public static int DropOffPos     = 13860;
     public static int HighJunction   = 14800;
+    public static int HighJunction_Auto = 15250;
     public static int UpperLimit     = 18000;
 
         //minimum height when the turret is past the restricted range, so it doesn't crash into anything
@@ -276,7 +277,7 @@ public class Mvrk_Robot
     public static double turretHalfRight = 0.40625;
 
     public static MvrkPIDController slideUpPID = new MvrkPIDController(11, 0, 0.32, 5500); // KD Values .25 -> .32 KG Previous Values 3600 -> 5500 2/19/2023
-    public static MvrkPIDController slideDownPID = new MvrkPIDController(3, 0, 0.25, 1000);
+    public static MvrkPIDController slideDownPID = new MvrkPIDController(0.8, 0, 0, 1500);
     public static double CycleExtendFlamethrowerOffset = -0.5;
     public static double CycleRetractFlamethrowerOffset = -0.25;
 

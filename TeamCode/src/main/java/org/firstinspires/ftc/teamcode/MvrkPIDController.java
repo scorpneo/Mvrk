@@ -63,6 +63,29 @@ public class MvrkPIDController {
         return output;
     }
 
+    public double output_vCompensated( double reference, double state, double currentVoltage)
+    {
+        double error;
+        double derivative;
+        // check if we need to unwrap angle
+            if (angleWrap) {
+            error = angleWrap(reference - state);
+        } else {
+            error = reference - state;
+        }
+        // forward euler integration
+        integral += error * timer.seconds();
+        derivative = (error - lastError) / timer.seconds();
+
+        double output = ((error * Kp) + (integral * Ki) + (derivative * Kd) + Kg * 12.7/currentVoltage);
+
+            timer.reset();
+        lastError = error;
+
+        return output;
+    }
+
+
 
     public double angleWrap(double radians) {
         while (radians > Math.PI) {

@@ -11,7 +11,8 @@ public class Mvrk_TurretController {
     private Servo turret;
     double tgtPos;
     double currPos;
-    public static MvrkPIDController turretController = new MvrkPIDController(0.25, 0, 0 , 0);
+    public static double kP = 0.10;
+    public static MvrkPIDController turretController = new MvrkPIDController(kP, 0, 0 , 0);
     private Telemetry telemetry;
 
     public void setTelemetry(Telemetry tele) {
@@ -20,7 +21,7 @@ public class Mvrk_TurretController {
 
     public Mvrk_TurretController(HardwareMap hardwareMap) {
         turret = hardwareMap.get(Servo.class, "Teacup");
-        tgtPos = 0;
+        tgtPos = turretUp;
         currPos = turretUp;
     }
 

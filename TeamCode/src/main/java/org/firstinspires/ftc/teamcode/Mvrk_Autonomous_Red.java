@@ -31,6 +31,7 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_wait8;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.DropOffPos;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.FloorPosition;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.HighJunction;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.HighJunction_Auto;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.LowJunction;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.MiddleCone;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.MvrkMotors.CAT_MOUSE;
@@ -406,17 +407,17 @@ public class Mvrk_Autonomous_Red extends LinearOpMode {
 
         trajPreLoadDropOff = Mavryk.MecanumDrive.trajectorySequenceBuilder(Red_Start.pose2d())
                 .lineToLinearHeading(Red_Preload_Dropoff.pose2d())  // STEP 1
-                .UNSTABLE_addTemporalMarkerOffset(Preload_offset2, () -> {
-                    Mavryk.Tilted_Towers.setPosition(Tilted_Towers_Tilted_Pos);
-                })
                         .UNSTABLE_addTemporalMarkerOffset(Preload_offset2, () -> {
+                            Mavryk.Tilted_Towers.setPosition(Tilted_Towers_Tilted_Pos);
                             Mavryk.TomAndJerrySlide.setTargetPosition(LowJunction); // STEP 2
                         })
+//                        .UNSTABLE_addTemporalMarkerOffset(Preload_offset2, () -> {
+//                        })
                         .UNSTABLE_addTemporalMarkerOffset(Preload_offset3, () -> {
                             Mavryk.TeacupTurret.setTargetPosition(turretRight);     // STEP 3
                         })
                         .UNSTABLE_addTemporalMarkerOffset(Preload_offset4, () -> {
-                            Mavryk.TomAndJerrySlide.setTargetPosition(HighJunction);// STEP 4
+                            Mavryk.TomAndJerrySlide.setTargetPosition(HighJunction_Auto);// STEP 4
                         })
                         .UNSTABLE_addTemporalMarkerOffset(Preload_offset5, () -> {
                             Mavryk.FlameThrowerSlide.setTargetState(PreloadExtend);
@@ -469,27 +470,25 @@ public class Mvrk_Autonomous_Red extends LinearOpMode {
                     })
                 .waitSeconds(Cycle_wait1) // NEW
                 .addTemporalMarker(()->{
-                    Mavryk.Looney.setPosition(Claw_Close_Pos);
+                    Mavryk.Looney.setPosition(Claw_Close_Pos);  // STEP 5
                 })
-                .waitSeconds(Cycle_wait5)   // STEP 5
+                .waitSeconds(Cycle_wait5)
                 .addTemporalMarker(()->{
-                    Mavryk.TomAndJerrySlide.setTargetPosition(LowJunction);
+                    Mavryk.TomAndJerrySlide.setTargetPosition(LowJunction); //STEP 6
                 })
-                .waitSeconds(Cycle_wait6)   //STEP 6
+                .waitSeconds(Cycle_wait6)
                 .addTemporalMarker(()->{
-                    Mavryk.FlameThrowerSlide.setTargetState(Retract);
-                    //Mavryk.FlameThrower.setPosition(xSlideInPos);
+                    Mavryk.FlameThrowerSlide.setTargetState(Retract); //STEP 7
+                    //Mavryk.Tilted_Towers.setPosition(Tilted_Towers_Tilted_Pos); // Added Tilt After Retract
                 })
-                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset6, () -> {
-                Mavryk.Tilted_Towers.setPosition(Tilted_Towers_Tilted_Pos); // Added Tilt After Retract
-                })
-                .waitSeconds(Cycle_wait7)   //STEP 7
+                .waitSeconds(Cycle_wait7)
                 .lineToLinearHeading(Red_CycleStart.pose2d())   //STEP 8
                     .UNSTABLE_addTemporalMarkerOffset(Cycle_offset9, () -> {
+                        Mavryk.Tilted_Towers.setPosition(Tilted_Towers_Tilted_Pos); // Added Tilt After Retract
                         Mavryk.TeacupTurret.setTargetPosition(turretRedDropoff);   //STEP 9
                     })
                     .UNSTABLE_addTemporalMarkerOffset(Cycle_offset10, () -> {
-                        Mavryk.TomAndJerrySlide.setTargetPosition(HighJunction);    //STEP10
+                        Mavryk.TomAndJerrySlide.setTargetPosition(HighJunction_Auto);    //STEP10
                     })
                     .UNSTABLE_addTemporalMarkerOffset(Cycle_offset11, () -> {
                         Mavryk.FlameThrowerSlide.setTargetState(Extend);
@@ -558,7 +557,7 @@ public class Mvrk_Autonomous_Red extends LinearOpMode {
                     Mavryk.TeacupTurret.setTargetPosition(turretRedDropoff);   //STEP 9
                 })
                 .UNSTABLE_addTemporalMarkerOffset(Cycle_offset10, () -> {
-                    Mavryk.TomAndJerrySlide.setTargetPosition(HighJunction);    //STEP10
+                    Mavryk.TomAndJerrySlide.setTargetPosition(HighJunction_Auto);    //STEP10
                 })
                 .UNSTABLE_addTemporalMarkerOffset(Cycle_offset11, () -> {
                     Mavryk.FlameThrowerSlide.setTargetState(Extend);
@@ -602,9 +601,10 @@ public class Mvrk_Autonomous_Red extends LinearOpMode {
                         .lineToLinearHeading(Red_Park_Pos1.pose2d())
                         .UNSTABLE_addTemporalMarkerOffset(Cycle_offset2, () -> {
                             Mavryk.TeacupTurret.setTargetPosition(turretUp);    // STEP 2
+                            Mavryk.FlameThrower.setPosition(xSlideInPos);
+
                         })
                         .UNSTABLE_addTemporalMarkerOffset(Cycle_offset4, () -> {
-                            Mavryk.FlameThrower.setPosition(xSlideInPos);
                             Mavryk.TomAndJerrySlide.setTargetPosition(FloorPosition);    // STEP 3
                         })
                         .build();
@@ -614,9 +614,9 @@ public class Mvrk_Autonomous_Red extends LinearOpMode {
                         .lineToLinearHeading(Red_Park_Pos2.pose2d())
                         .addTemporalMarker(()->{
                             Mavryk.TeacupTurret.setTargetPosition(turretUp);    // STEP 2
+                            Mavryk.FlameThrower.setPosition(xSlideInPos);
                         })
                         .addTemporalMarker(()->{
-                            Mavryk.FlameThrower.setPosition(xSlideInPos);
                             Mavryk.TomAndJerrySlide.setTargetPosition(FloorPosition);    // STEP 3
                         })
                         .build();
@@ -626,9 +626,9 @@ public class Mvrk_Autonomous_Red extends LinearOpMode {
                         .lineToLinearHeading(Red_Park_Pos3.pose2d())
                         .UNSTABLE_addTemporalMarkerOffset(Cycle_offset2, () -> {
                             Mavryk.TeacupTurret.setTargetPosition(turretUp);    // STEP 2
+                            Mavryk.FlameThrower.setPosition(xSlideInPos);
                         })
                         .UNSTABLE_addTemporalMarkerOffset(Cycle_offset4, () -> {
-                            Mavryk.FlameThrower.setPosition(xSlideInPos);
                             Mavryk.TomAndJerrySlide.setTargetPosition(FloorPosition);    // STEP 3
                         })
                         .build();
