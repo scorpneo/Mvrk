@@ -152,7 +152,6 @@ public class Mvrk_Slide_Debugger extends LinearOpMode {
     // Low -> Low = No Op
     // Med -> Med= No Op
     // High -> High = No Op
-
     @Override
     public void runOpMode() {
 
