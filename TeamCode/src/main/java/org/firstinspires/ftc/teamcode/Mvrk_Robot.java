@@ -164,12 +164,12 @@ public class Mvrk_Robot
     public static MvrkPose2d Blue_Park_Pos3 = new MvrkPose2d(-57,12, 180);
 
         public static double Preload_offset2 = -2.4;
-        public static double Preload_offset3 = -2.2;
+        public static double Preload_offset3 = -1.8; // changed from -2.2 -> -1.8 fixed hitting camera on the turret
         public static double Preload_offset4 = -1.0;
         public static double Preload_offset5 = -0.4;
         public static double Preload_offset6 = -0.3;
-    public static double Preload_offset7 = -0.2;
-    public static double Preload_offset8 = -0.2;
+        public static double Preload_offset7 = -0.2;
+        public static double Preload_offset8 = -0.2;
         public static double Preload_offset10 = -0.9;
         public static double Preload_offset11 = -0.2;
 
