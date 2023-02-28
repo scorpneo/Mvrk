@@ -2,16 +2,18 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretUp;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+@Config
 
 public class Mvrk_TurretController {
     private Servo turret;
     double tgtPos;
     double currPos;
-    public static double kP = 0.10;
+    public static double kP = 0.25;
     public static MvrkPIDController turretController = new MvrkPIDController(kP, 0, 0 , 0);
     private Telemetry telemetry;
 

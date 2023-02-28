@@ -33,12 +33,14 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.FloorPosition;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.HighJunction;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.HighJunction_Auto;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.LowJunction;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.MidJunction;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.MiddleCone;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.MvrkMotors.CAT_MOUSE;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.MvrkServos.CARTOON;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.MvrkServos.FLAMETHROWER;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.MvrkServos.TEACUP;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_offset10;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_offset11;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_offset2;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_offset3;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_offset4;
@@ -175,7 +177,7 @@ public class Mvrk_Autonomous_Red extends LinearOpMode {
         telemetry.addData("Status: ", "Motors & Servos initialized");
         telemetry.update();
 
-        buildPreloadTrajectory();
+        buildPreloadTest();
         trajCycleDropOffTopCone = buildCycleTrajectory(TopCone); // Note: Drop slides to pick up the next cone, in this case Top Mid
         trajCycleDropOffTopMidCone = buildCycleTrajectory(TopMidCone); // Note: Drop slides to pick up the next cone, in this case Middle
         trajCycleDropOffMiddleCone = buildCycleTrajectory(MiddleCone); // Note: Drop slides to pick up the next cone, in this case BottomMid
@@ -440,6 +442,130 @@ public class Mvrk_Autonomous_Red extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(Preload_offset10, () -> {
                     Mavryk.TomAndJerrySlide.setTargetPosition(LowJunction);                   // STEP 10
                 })
+                .build();
+
+        int iNumSegments = trajPreLoadDropOff.size();
+        telemetry.addLine(String.format("%d. Preload Trajectory numTrajectory Segments: %d", iTeleCt++, iNumSegments));
+        for(int iSeg=0; iSeg<iNumSegments; iSeg++ ) {
+            telemetry.addLine(String.format("%d. Preload Trajectory Segment %d Duration: %.3f", iTeleCt++, iSeg,trajPreLoadDropOff.get(iSeg).getDuration()));
+        }
+        telemetry.addLine(String.format("%d. Preload calculated Duration: %.3f", iTeleCt++, trajPreLoadDropOff.duration()));
+
+        return;
+    }
+
+    void buildPreloadMid() {
+        telemetry.addLine(String.format("%d. buildPreloadTrajectory", iTeleCt++));
+
+        trajPreLoadDropOff = Mavryk.MecanumDrive.trajectorySequenceBuilder(Red_Start.pose2d())
+                .lineToLinearHeading(Red_CycleStart.pose2d())  // STEP 1
+                .UNSTABLE_addTemporalMarkerOffset(Preload_offset2, () -> {
+                    Mavryk.Tilted_Towers.setPosition(Tilted_Towers_Tilted_Pos);
+                    Mavryk.TomAndJerrySlide.setTargetPosition(LowJunction); // STEP 2
+                })
+//                        .UNSTABLE_addTemporalMarkerOffset(Preload_offset2, () -> {
+//                        })
+                .UNSTABLE_addTemporalMarkerOffset(Preload_offset3, () -> {
+                    Mavryk.TeacupTurret.setTargetPosition(turretRedDropoff);     // STEP 3
+                })
+
+                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset10, () -> {
+                    Mavryk.TomAndJerrySlide.setTargetPosition(MidJunction);    //STEP10
+                })
+                .UNSTABLE_addTemporalMarkerOffset(Preload_offset11, () -> {
+                    Mavryk.FlameThrowerSlide.setTargetState(Extend);
+                    //Mavryk.FlameThrower.setPosition(xSlideOutPos);     //STEP11
+                })
+                .waitSeconds(Cycle_wait8)
+                .addTemporalMarker( () -> {
+                    Mavryk.TomAndJerrySlide.setTargetPosition(DropOffPos);    // STEP 12
+                })
+                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset12, () -> {
+                    Mavryk.Tilted_Towers.setPosition(Tilted_Towers_Straight_Pos);
+                })
+                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset13, () -> {
+                    Mavryk.Looney.setPosition(Claw_Open_Pos); // STEP 13
+                })
+                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset14, () -> {
+                    Mavryk.FlameThrowerSlide.setTargetState(DropoffRetract); // STEP 14
+                })
+
+
+//                    .UNSTABLE_addTemporalMarkerOffset(Cycle_offset15, () -> {
+                .waitSeconds(0.2)
+                .addTemporalMarker(()->{
+                    Mavryk.TomAndJerrySlide.setTargetPosition(LowJunction);  //STEP 15                 // STEP 10
+                })
+
+                .lineToLinearHeading(Red_Preload_Dropoff.pose2d())
+                .waitSeconds(Cycle_wait7)
+
+                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset12, () -> {
+                    Mavryk.TeacupTurret.setTargetPosition(turretLeft);
+                })
+                .lineToLinearHeading(Red_CycleStart.myPose2D)
+                .build();
+
+        int iNumSegments = trajPreLoadDropOff.size();
+        telemetry.addLine(String.format("%d. Preload Trajectory numTrajectory Segments: %d", iTeleCt++, iNumSegments));
+        for(int iSeg=0; iSeg<iNumSegments; iSeg++ ) {
+            telemetry.addLine(String.format("%d. Preload Trajectory Segment %d Duration: %.3f", iTeleCt++, iSeg,trajPreLoadDropOff.get(iSeg).getDuration()));
+        }
+        telemetry.addLine(String.format("%d. Preload calculated Duration: %.3f", iTeleCt++, trajPreLoadDropOff.duration()));
+
+        return;
+    }
+
+    void buildPreloadTest() {
+        telemetry.addLine(String.format("%d. buildPreloadTrajectory", iTeleCt++));
+
+        trajPreLoadDropOff = Mavryk.MecanumDrive.trajectorySequenceBuilder(Red_Start.pose2d())
+                .lineToLinearHeading(Red_CycleStart.pose2d())  // STEP 1
+                .UNSTABLE_addTemporalMarkerOffset(Preload_offset2, () -> {
+                    Mavryk.Tilted_Towers.setPosition(Tilted_Towers_Tilted_Pos);
+                    Mavryk.TomAndJerrySlide.setTargetPosition(LowJunction); // STEP 2
+                })
+//                        .UNSTABLE_addTemporalMarkerOffset(Preload_offset2, () -> {
+//                        })
+                .UNSTABLE_addTemporalMarkerOffset(Preload_offset3, () -> {
+                    Mavryk.TeacupTurret.setTargetPosition(turretRedDropoff);     // STEP 3
+                })
+
+                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset10, () -> {
+                    Mavryk.TomAndJerrySlide.setTargetPosition(HighJunction_Auto);    //STEP10
+                })
+                .UNSTABLE_addTemporalMarkerOffset(Preload_offset11, () -> {
+                    Mavryk.FlameThrowerSlide.setTargetState(Extend);
+                    //Mavryk.FlameThrower.setPosition(xSlideOutPos);     //STEP11
+                })
+                .waitSeconds(Cycle_wait8)
+                .addTemporalMarker( () -> {
+                    Mavryk.TomAndJerrySlide.setTargetPosition(DropOffPos);    // STEP 12
+                })
+                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset12, () -> {
+                    Mavryk.Tilted_Towers.setPosition(Tilted_Towers_Straight_Pos);
+                })
+                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset13, () -> {
+                    Mavryk.Looney.setPosition(Claw_Open_Pos); // STEP 13
+                })
+                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset14, () -> {
+                    Mavryk.FlameThrowerSlide.setTargetState(DropoffRetract); // STEP 14
+                })
+
+
+//                    .UNSTABLE_addTemporalMarkerOffset(Cycle_offset15, () -> {
+                .waitSeconds(0.2)
+                .addTemporalMarker(()->{
+                    Mavryk.TomAndJerrySlide.setTargetPosition(LowJunction);  //STEP 15                 // STEP 10
+                })
+
+                .lineToLinearHeading(Red_Preload_Dropoff.pose2d())
+                .waitSeconds(Cycle_wait7)
+
+                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset12, () -> {
+                    Mavryk.TeacupTurret.setTargetPosition(turretLeft);
+                })
+                .lineToLinearHeading(Red_CycleStart.myPose2D)
                 .build();
 
         int iNumSegments = trajPreLoadDropOff.size();

@@ -146,8 +146,9 @@ public class Mvrk_Robot
     public static final float oneAndHalfTile   = 36 * mmPerInch;
     
     public static MvrkPose2d Red_Start = new MvrkPose2d(35.5, 63.5, -90);
-    public static MvrkPose2d Red_Preload_Dropoff = new MvrkPose2d(35.5,0, -90);
+    public static MvrkPose2d Red_Preload_Dropoff = new MvrkPose2d(33.75,0, -90);
     public static MvrkPose2d Red_CycleStart = new MvrkPose2d(33.75,12, -90); //  x = 35.5
+    public static MvrkPose2d Red_MidStart = new MvrkPose2d(9.75, 12, -90); // used for middle junction preload
     public static MvrkPose2d Red_CycleEnd  = new MvrkPose2d(51.5,12,-90); // 52
     public static MvrkPose2d Red_CycleEnd2 = new MvrkPose2d(50, 12, -90);
     public static MvrkPose2d Red_Park_Pos1 = new MvrkPose2d(56,12, -90); //59
@@ -168,10 +169,10 @@ public class Mvrk_Robot
         public static double Preload_offset4 = -1.0;
         public static double Preload_offset5 = -0.4;
         public static double Preload_offset6 = -0.3;
-    public static double Preload_offset7 = -0.2;
-    public static double Preload_offset8 = -0.2;
+        public static double Preload_offset7 = -0.2;
+        public static double Preload_offset8 = -0.2;
         public static double Preload_offset10 = -0.9;
-        public static double Preload_offset11 = -0.2;
+        public static double Preload_offset11 = -0.9;
 
         public static double Preload_wait1 = 0.4;
         public static double Preload_wait6 = 0.2;
@@ -268,7 +269,7 @@ public class Mvrk_Robot
     public static double[] turret_restrictedRange = {0.5, 0.59};
     public static double turretUp = 0.56;
     public static double turretDown = 0;
-    public static double turretLeft = 0.83;
+    public static double turretLeft = 0.84;
     public static double turretRight = 0.2675;
     public static double turretRedDropoff = 0.4138;
     public static double turretBlueDropoff = 0.6962;
@@ -276,7 +277,7 @@ public class Mvrk_Robot
     public static double turretIncrement = 0.005;
     public static double turretHalfRight = 0.40625;
 
-    public static MvrkPIDController slideUpPID = new MvrkPIDController(11, 0, 0.32, 5500); // KD Values .25 -> .32 KG Previous Values 3600 -> 5500 2/19/2023
+    public static MvrkPIDController slideUpPID = new MvrkPIDController(11, 0, 0, 5500); // KD Values .25 -> .32 KG Previous Values 3600 -> 5500 2/19/2023
     public static MvrkPIDController slideDownPID = new MvrkPIDController(0.8, 0, 0, 1500);
     public static double CycleExtendFlamethrowerOffset = -0.5;
     public static double CycleRetractFlamethrowerOffset = -0.25;
