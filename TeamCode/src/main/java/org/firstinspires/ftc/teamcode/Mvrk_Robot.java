@@ -154,13 +154,15 @@ public class Mvrk_Robot
     public static MvrkPose2d Red_Park_Pos3 = new MvrkPose2d(6.5,12, -90);
 
     public static MvrkPose2d Blue_Start = new MvrkPose2d(-35.5, 63.5, -90);
-    public static MvrkPose2d Blue_Preload_Dropoff = new MvrkPose2d(-35.5,0, -90);
-    public static MvrkPose2d Blue_CycleStart = new MvrkPose2d(-33.75,12.5, -90); //  x = 35.5
-    public static MvrkPose2d Blue_CycleEnd  = new MvrkPose2d(-52,12,-90); // 52
+    public static MvrkPose2d Blue_PushSignal = new MvrkPose2d(-33.75,3, -90);
+    public static MvrkPose2d Blue_CycleStart = new MvrkPose2d(-36.75,12, -90); //  x = -35.5
+    public static MvrkPose2d Blue_PreloadStart = new MvrkPose2d(-35.75, 12, -90 );
+    public static MvrkPose2d Blue_MidStart = new MvrkPose2d(-35.75, 36, -90); // used for middle junction preload
+    public static MvrkPose2d Blue_CycleEnd  = new MvrkPose2d(-51.5,12,-90); // 52
     public static MvrkPose2d Blue_CycleEnd2 = new MvrkPose2d(-50, 12, -90);
-    public static MvrkPose2d Blue_Park_Pos1 = new MvrkPose2d(-7,12, -90); //59
-    public static MvrkPose2d Blue_Park_Pos2 = new MvrkPose2d(-32.5,12, -90);
-    public static MvrkPose2d Blue_Park_Pos3 = new MvrkPose2d(-57,12, -90);
+    public static MvrkPose2d Blue_Park_Pos1 = new MvrkPose2d(-56,12, -90); //59
+    public static MvrkPose2d Blue_Park_Pos2 = new MvrkPose2d(-30.5,12, -90);
+    public static MvrkPose2d Blue_Park_Pos3 = new MvrkPose2d(-6.5,12, -90);
 
         public static double Preload_offset2 = -2.4;
         public static double Preload_offset3 = -1.4; //-2.0
