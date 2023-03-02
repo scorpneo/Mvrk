@@ -212,6 +212,8 @@ public class Mvrk_Robot
         public static double Cycle_wait16 = 0;
         public static double Cycle_wait17 = 0;
 
+        public static double Dropoff_offset = -0.2;
+
 
 //    public static Offsets PreloadOffsets;
 //    public static Offsets CycleOffsets;
