@@ -16,16 +16,12 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_offset10;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_offset11;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_offset13;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_offset14;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_offset15;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_offset2;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_offset3;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_offset4;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_offset9;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_wait1;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_wait12;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_wait13;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_wait14;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_wait4;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_wait5;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_wait6;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Cycle_wait7;
@@ -48,15 +44,12 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_offset7;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_offset8;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_wait1;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_wait6;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_wait7;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_wait8;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_CycleEnd;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_CycleEnd2;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_CycleStart;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_Park_Pos1;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_Park_Pos2;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_Park_Pos3;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_Preload_Dropoff;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_PushSignal;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_Start;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_cyclesToRun;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.TopCone;
@@ -67,11 +60,7 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretRedDropoff;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretRight;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turretUp;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.turret_newPos;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideDropPos;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideInPos;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideInterPos;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlideOutPos;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.xSlidePickupPos;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -411,7 +400,7 @@ public class Mvrk_Autonomous_Distance extends LinearOpMode {
         telemetry.addLine(String.format("%d. buildPreloadTrajectory", iTeleCt++));
 
         trajPreLoadDropOff = Mavryk.MecanumDrive.trajectorySequenceBuilder(Red_Start.pose2d())
-                .lineToLinearHeading(Red_Preload_Dropoff.pose2d())  // STEP 1
+                .lineToLinearHeading(Red_PushSignal.pose2d())  // STEP 1
                         .UNSTABLE_addTemporalMarkerOffset(Preload_offset2, () -> {
                             Mavryk.TomAndJerrySlide.setTargetPosition(LowJunction); // STEP 2
                         })

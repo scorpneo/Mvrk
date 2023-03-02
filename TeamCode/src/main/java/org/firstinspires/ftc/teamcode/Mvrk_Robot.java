@@ -32,15 +32,12 @@ package org.firstinspires.ftc.teamcode;
 //import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.SensorREV2mDistance;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -146,9 +143,10 @@ public class Mvrk_Robot
     public static final float oneAndHalfTile   = 36 * mmPerInch;
     
     public static MvrkPose2d Red_Start = new MvrkPose2d(35.5, 63.5, -90);
-    public static MvrkPose2d Red_Preload_Dropoff = new MvrkPose2d(33.75,0, -90);
+    public static MvrkPose2d Red_PushSignal = new MvrkPose2d(33.75,3, -90);
     public static MvrkPose2d Red_CycleStart = new MvrkPose2d(33.75,12, -90); //  x = 35.5
-    public static MvrkPose2d Red_MidStart = new MvrkPose2d(9.75, 12, -90); // used for middle junction preload
+    public static MvrkPose2d Red_PreloadStart = new MvrkPose2d(35.75, 12, -90 );
+    public static MvrkPose2d Red_MidStart = new MvrkPose2d(35.75, 36, -90); // used for middle junction preload
     public static MvrkPose2d Red_CycleEnd  = new MvrkPose2d(51.5,12,-90); // 52
     public static MvrkPose2d Red_CycleEnd2 = new MvrkPose2d(50, 12, -90);
     public static MvrkPose2d Red_Park_Pos1 = new MvrkPose2d(56,12, -90); //59
@@ -172,7 +170,7 @@ public class Mvrk_Robot
         public static double Preload_offset7 = -0.2;
         public static double Preload_offset8 = -0.2;
         public static double Preload_offset10 = -0.9;
-        public static double Preload_offset11 = -0.9;
+        public static double Preload_offset11 = -0.7;
 
         public static double Preload_wait1 = 0.4;
         public static double Preload_wait6 = 0.2;
@@ -230,7 +228,7 @@ public class Mvrk_Robot
 
     //Flamethrower variables
     public static double xSlideOutPos = 0.12;
-    public static double xSlideDropPos = 0.40; //0.45; //0.5;
+    public static double xSlideDropPos = 0.25; //0.45; //0.5;
     public static double xSlidePickupPos = 0.17; //todo: eliminate?
     public static double xSlideInPos = 0.58;
     public static double xSlideInterPos = 0.49;
@@ -251,10 +249,11 @@ public class Mvrk_Robot
     public static int MiddleCone     = 2430; //2530; //2830
     public static int TopMidCone     = 3080; //3180; //3130
     public static int TopCone        = 3500;//3600; //3830; // 3730
-    public static int LowJunction    = 5800; //5000;
-    public static int MidJunction    = 10250;
+    public static int LowJunction    = 6400; //5000; 6400
+    public static int MidJunction    = 10850; // 10850
     public static int DropOffPos     = 13860;
-    public static int HighJunction   = 14800;
+    public static int MidDropOffPos     = 8300;
+    public static int HighJunction   = 15400; // 15400
     public static int HighJunction_Auto = 15250;
     public static int UpperLimit     = 18000;
 

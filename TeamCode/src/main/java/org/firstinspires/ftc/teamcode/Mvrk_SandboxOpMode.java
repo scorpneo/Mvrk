@@ -52,7 +52,7 @@ import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_offset8;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_wait1;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Preload_wait6;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_CycleStart;
-import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_Preload_Dropoff;
+import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_PushSignal;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.Red_Start;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.bumperSpeedAdjust;
 import static org.firstinspires.ftc.teamcode.Mvrk_Robot.dPadSpeedAdjust;
@@ -352,7 +352,7 @@ public class Mvrk_SandboxOpMode extends LinearOpMode
     void buildPreloadTrajectory() {
 
         trajPreLoadDropOff = Mavryk.MecanumDrive.trajectorySequenceBuilder(Red_Start.pose2d())
-                .lineToLinearHeading(Red_Preload_Dropoff.pose2d())  // STEP 1
+                .lineToLinearHeading(Red_PushSignal.pose2d())  // STEP 1
                 .UNSTABLE_addTemporalMarkerOffset(Preload_offset2, () -> {
                     Mavryk.TomAndJerrySlide.setTargetPosition(LowJunction); // STEP 2
                 })
