@@ -212,6 +212,7 @@ public class Mvrk_Autonomous_RedMid extends LinearOpMode {
         // while waiting for the game to start, search for april tags
         while (!isStarted() && !isStopRequested()) {
             detectAprilTags();
+            telemetry.update();
             sleep(20);
         }
 
@@ -243,7 +244,7 @@ public class Mvrk_Autonomous_RedMid extends LinearOpMode {
         Mavryk.MecanumDrive.setPoseEstimate(Red_Start.pose2d());
         currentAutoState = Mvrk_Robot.AutoState.PRELOAD;
         Mavryk.MecanumDrive.followTrajectorySequenceAsync(trajPreLoadDropOff);
-        //Mavryk.FlameThrowerSlide.setTelemetry(telemetry);
+//        Mavryk.FlameThrowerSlide.setTelemetry(telemetry);
 
         boolean bTrajCompleted = false;
         while (opModeIsActive() && !isStopRequested() && !bTrajCompleted ) {
@@ -380,9 +381,6 @@ public class Mvrk_Autonomous_RedMid extends LinearOpMode {
     Pose2d getHeadingCorrectedPoseEstimate(Pose2d expectedPose)
     {
         double yaw = myHeadingEstimator.getYaw();
-        telemetry.addData("Yaw correction: ", yaw);
-        telemetry.addData("Corrected heading:", expectedPose.getHeading() + yaw);
-        telemetry.update();
 
         return new Pose2d(expectedPose.getX(), expectedPose.getY(), expectedPose.getHeading() + yaw);
     }
@@ -407,7 +405,6 @@ public class Mvrk_Autonomous_RedMid extends LinearOpMode {
     }
 
     void buildPreloadTrajectory() {
-        telemetry.addLine(String.format("%d. buildPreloadTrajectory", iTeleCt++));
 
         trajPreLoadDropOff = Mavryk.MecanumDrive.trajectorySequenceBuilder(Red_Start.pose2d())
                 .lineToLinearHeading(Red_PushSignal.pose2d())  // STEP 1
@@ -457,7 +454,7 @@ public class Mvrk_Autonomous_RedMid extends LinearOpMode {
     }
 
     void buildPreloadMid() {
-        telemetry.addLine(String.format("%d. buildPreloadTrajectory", iTeleCt++));
+//        telemetry.addLine(String.format("%d. buildPreloadTrajectory", iTeleCt++));
 
         trajPreLoadDropOff = Mavryk.MecanumDrive.trajectorySequenceBuilder(Red_Start.pose2d())
                 .lineToLinearHeading(Red_MidStart.pose2d())  // STEP 1
@@ -482,7 +479,7 @@ public class Mvrk_Autonomous_RedMid extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(Dropoff_offset, () -> {
                     Mavryk.TomAndJerrySlide.setTargetPosition(MidDropOffPos);    // STEP 12
                 })
-                .UNSTABLE_addTemporalMarkerOffset(0.3, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(Cycle_offset12, () -> {
                     Mavryk.Tilted_Towers.setPosition(Tilted_Towers_Straight_Pos);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(Cycle_offset13, () -> {
@@ -519,7 +516,7 @@ public class Mvrk_Autonomous_RedMid extends LinearOpMode {
     }
 
     void buildPreloadTest() {
-        telemetry.addLine(String.format("%d. buildPreloadTrajectory", iTeleCt++));
+//        telemetry.addLine(String.format("%d. buildPreloadTrajectory", iTeleCt++));
 
         trajPreLoadDropOff = Mavryk.MecanumDrive.trajectorySequenceBuilder(Red_Start.pose2d())
                 .lineToLinearHeading(Red_PreloadStart.pose2d())  // STEP 1
@@ -583,7 +580,7 @@ public class Mvrk_Autonomous_RedMid extends LinearOpMode {
 
     TrajectorySequence buildCycleTrajectory(int iCycleConePickup)
     {
-        telemetry.addLine(String.format("%d. buildCycleTrajectory %d", iTeleCt++, iCycleConePickup));
+//        telemetry.addLine(String.format("%d. buildCycleTrajectory %d", iTeleCt++, iCycleConePickup));
         TrajectorySequence trajSeq = Mavryk.MecanumDrive.trajectorySequenceBuilder(Red_CycleStart.pose2d())
                 .lineToLinearHeading(Red_CycleEnd.pose2d()) // STEP 1
                     .UNSTABLE_addTemporalMarkerOffset(Cycle_offset2, () -> {
@@ -623,9 +620,10 @@ public class Mvrk_Autonomous_RedMid extends LinearOpMode {
                         //Mavryk.FlameThrower.setPosition(xSlideOutPos);     //STEP11
                     })
                 .waitSeconds(Cycle_wait8)
-                    .UNSTABLE_addTemporalMarkerOffset(Dropoff_offset, () -> {
-                        Mavryk.TomAndJerrySlide.setTargetPosition(DropOffPos);    // STEP 12
-                    })
+//                .UNSTABLE_addTemporalMarkerOffset(Dropoff_offset, () -> {
+                .addTemporalMarker(() -> {
+                    Mavryk.TomAndJerrySlide.setTargetPosition(DropOffPos);    // STEP 12
+                })
                     .UNSTABLE_addTemporalMarkerOffset(Cycle_offset12, () -> {
                       Mavryk.Tilted_Towers.setPosition(Tilted_Towers_Straight_Pos);
                     })
@@ -691,8 +689,9 @@ public class Mvrk_Autonomous_RedMid extends LinearOpMode {
                     Mavryk.FlameThrowerSlide.setTargetState(Extend);
                     //Mavryk.FlameThrower.setPosition(xSlideOutPos);     //STEP11
                 })
-                //.waitSeconds(Cycle_wait8)
-                .UNSTABLE_addTemporalMarkerOffset(Dropoff_offset, () -> {
+                .waitSeconds(Cycle_wait8)
+//                .UNSTABLE_addTemporalMarkerOffset(Dropoff_offset, () -> {
+                .addTemporalMarker(() -> {
                     Mavryk.TomAndJerrySlide.setTargetPosition(DropOffPos);    // STEP 12
                 })
                 .waitSeconds(Cycle_wait12)
@@ -708,12 +707,12 @@ public class Mvrk_Autonomous_RedMid extends LinearOpMode {
                 })
                 .build();
 
-//        int iNumSegments = trajSeq.size();
-//        telemetry.addLine(String.format("%d. Cycle %d numTrajectory Segments: %d", iTeleCt++, iCycleConePickup, iNumSegments));
-//        for(int iSeg=0; iSeg<iNumSegments; iSeg++ ) {
-//            telemetry.addLine(String.format("%d. Cycle %d Trajectory Segment %d Duration: %.3f", iTeleCt++, iCycleConePickup, iSeg,trajSeq.get(iSeg).getDuration()));
-//        }
-//        telemetry.addLine(String.format("%d. Cycle %d Trajectory calculated Duration: %.3f", iTeleCt++, iCycleConePickup, trajSeq.duration()));
+        int iNumSegments = trajSeq.size();
+        telemetry.addLine(String.format("%d. Cycle %d numTrajectory Segments: %d", iTeleCt++, iCycleConePickup, iNumSegments));
+        for(int iSeg=0; iSeg<iNumSegments; iSeg++ ) {
+            telemetry.addLine(String.format("%d. Cycle %d Trajectory Segment %d Duration: %.3f", iTeleCt++, iCycleConePickup, iSeg,trajSeq.get(iSeg).getDuration()));
+        }
+        telemetry.addLine(String.format("%d. Cycle %d Trajectory calculated Duration: %.3f", iTeleCt++, iCycleConePickup, trajSeq.duration()));
 
         return trajSeq;
     }
@@ -734,6 +733,7 @@ public class Mvrk_Autonomous_RedMid extends LinearOpMode {
                         })
                         .UNSTABLE_addTemporalMarkerOffset(Cycle_offset4, () -> {
                             Mavryk.TomAndJerrySlide.setTargetPosition(FloorPosition);    // STEP 3
+                            Mavryk.Looney.setPosition(Claw_Close_Pos);
                         })
                         .build();
                 break;
@@ -746,6 +746,7 @@ public class Mvrk_Autonomous_RedMid extends LinearOpMode {
                         })
                         .addTemporalMarker(()->{
                             Mavryk.TomAndJerrySlide.setTargetPosition(FloorPosition);    // STEP 3
+                            Mavryk.Looney.setPosition(Claw_Close_Pos);
                         })
                         .build();
                 break;
@@ -758,6 +759,7 @@ public class Mvrk_Autonomous_RedMid extends LinearOpMode {
                         })
                         .UNSTABLE_addTemporalMarkerOffset(Cycle_offset4, () -> {
                             Mavryk.TomAndJerrySlide.setTargetPosition(FloorPosition);    // STEP 3
+                            Mavryk.Looney.setPosition(Claw_Close_Pos);
                         })
                         .build();
                 break;
@@ -837,12 +839,12 @@ public class Mvrk_Autonomous_RedMid extends LinearOpMode {
     void tagToTelemetry(AprilTagDetection detection)
     {
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
-        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
-        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
-        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+//        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
+//        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
+//        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
+//        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
+//        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
+//        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
 }
 

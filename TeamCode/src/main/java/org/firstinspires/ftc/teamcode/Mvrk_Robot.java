@@ -144,7 +144,7 @@ public class Mvrk_Robot
     
     public static MvrkPose2d Red_Start = new MvrkPose2d(35.5, 63.5, -90);
     public static MvrkPose2d Red_PushSignal = new MvrkPose2d(33.75,3, -90);
-    public static MvrkPose2d Red_CycleStart = new MvrkPose2d(36.75,12, -90); //  x = 35.5
+    public static MvrkPose2d Red_CycleStart = new MvrkPose2d(33.75,12, -90); //  x = 35.5
     public static MvrkPose2d Red_PreloadStart = new MvrkPose2d(35.75, 12, -90 );
     public static MvrkPose2d Red_MidStart = new MvrkPose2d(35.75, 36, -90); // used for middle junction preload
     public static MvrkPose2d Red_CycleEnd  = new MvrkPose2d(51.5,12,-90); // 52
@@ -155,7 +155,7 @@ public class Mvrk_Robot
 
     public static MvrkPose2d Blue_Start = new MvrkPose2d(-35.5, 63.5, -90);
     public static MvrkPose2d Blue_PushSignal = new MvrkPose2d(-33.75,3, -90);
-    public static MvrkPose2d Blue_CycleStart = new MvrkPose2d(-36.75,12, -90); //  x = -35.5
+    public static MvrkPose2d Blue_CycleStart = new MvrkPose2d(-33.75,12, -90); //  x = -35.5
     public static MvrkPose2d Blue_PreloadStart = new MvrkPose2d(-35.75, 12, -90 );
     public static MvrkPose2d Blue_MidStart = new MvrkPose2d(-35.75, 36, -90); // used for middle junction preload
     public static MvrkPose2d Blue_CycleEnd  = new MvrkPose2d(-51.5,12,-90); // 52
@@ -187,9 +187,9 @@ public class Mvrk_Robot
         public static double Cycle_offset7 = 0;
         public static double Cycle_offset8 = 0;
         public static double Cycle_offset9 = -1.2;
-        public static double Cycle_offset10 = -1.35;
-        public static double Cycle_offset11 = -0.6;
-        public static double Cycle_offset12 = -0.6;
+        public static double Cycle_offset10 = -1;
+        public static double Cycle_offset11 = -0.4;
+        public static double Cycle_offset12 = -0.3;
         public static double Cycle_offset13 = -0.2;
         public static double Cycle_offset14 = -0.2;
         public static double Cycle_offset15 = -0.2;
@@ -202,7 +202,7 @@ public class Mvrk_Robot
         public static double Cycle_wait4 = 0;
         public static double Cycle_wait5 = 0.2;
         public static double Cycle_wait6 = 0.2;
-        public static double Cycle_wait7 = 0;
+        public static double Cycle_wait7 = 0.2;
         public static double Cycle_wait8 = 0.4;
         public static double Cycle_wait9 = 0;
         public static double Cycle_wait10 = 0;
